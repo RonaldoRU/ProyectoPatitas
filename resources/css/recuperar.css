@@ -1,0 +1,328 @@
+.recovery-page {
+    --recovery-forest: #183d35;
+    --recovery-ink: #182522;
+    --recovery-muted: #6b7972;
+    --recovery-line: #dce2d9;
+    --recovery-amber: #b8823c;
+    --recovery-paper: #f3f4ee;
+
+    min-height: 100vh;
+    padding: 0 28px 40px;
+    background-color: var(--recovery-paper);
+    background-image: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 25px,
+        rgb(24 61 53 / 2%) 26px,
+        rgb(24 61 53 / 2%) 27px
+    );
+    color: var(--recovery-ink);
+    font-family: 'Instrument Sans', ui-sans-serif, sans-serif;
+}
+
+.recovery-header {
+    display: flex;
+    max-width: 1120px;
+    min-height: 76px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--recovery-line);
+}
+
+.recovery-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--recovery-forest);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 17px;
+    text-decoration: none;
+}
+
+.recovery-brand__mark {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--recovery-forest);
+    color: #e1e89f;
+    font-family: 'Instrument Sans', ui-sans-serif, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.recovery-back,
+.recovery-footer a {
+    color: var(--recovery-forest);
+    font-size: 12px;
+    font-weight: 700;
+    text-underline-offset: 3px;
+}
+
+.recovery-intro {
+    max-width: 1120px;
+    margin: 52px auto 30px;
+}
+
+.recovery-kicker {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--recovery-amber);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.recovery-intro h1 {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.12;
+}
+
+.recovery-intro p {
+    margin: 10px 0 0;
+    color: var(--recovery-muted);
+    font-size: 14px;
+}
+
+.recovery-flow {
+    display: grid;
+    max-width: 1120px;
+    grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+    margin: 0 auto;
+}
+
+.recovery-card {
+    min-width: 0;
+    padding: 30px;
+    border: 1px solid rgb(24 61 53 / 10%);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 95%);
+    box-shadow: 0 18px 48px rgb(24 61 53 / 6%);
+}
+
+.recovery-card--locked {
+    background: rgb(255 255 255 / 76%);
+}
+
+.recovery-step {
+    display: inline-flex;
+    min-height: 26px;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 0 10px;
+    border-radius: 3px;
+    background: #f7eddc;
+    color: #8c622c;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.recovery-card h2 {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.recovery-description {
+    min-height: 42px;
+    margin: 10px 0 22px;
+    color: var(--recovery-muted);
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.recovery-form {
+    display: grid;
+    gap: 16px;
+}
+
+.recovery-field {
+    display: grid;
+    gap: 7px;
+}
+
+.recovery-field label {
+    color: #46574e;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.recovery-field input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 12px;
+    border: 1px solid #dce2d9;
+    border-radius: 4px;
+    outline: none;
+    background: #fbfcf9;
+    color: var(--recovery-ink);
+    font: inherit;
+    font-size: 13px;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.recovery-field input::placeholder {
+    color: #9aa49e;
+}
+
+.recovery-field input:focus {
+    border-color: var(--recovery-amber);
+    box-shadow: 0 0 0 3px rgb(184 130 60 / 13%);
+}
+
+.recovery-field input:disabled {
+    background: #f0f1ed;
+    color: #8a938d;
+    cursor: not-allowed;
+}
+
+.recovery-submit {
+    min-height: 47px;
+    margin-top: 2px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--recovery-amber);
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    transition: background-color 140ms ease;
+}
+
+.recovery-submit:hover:not(:disabled) {
+    background: #986b31;
+}
+
+.recovery-submit:focus-visible {
+    outline: 3px solid rgb(184 130 60 / 30%);
+    outline-offset: 3px;
+}
+
+.recovery-submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.recovery-message {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.recovery-message--success {
+    background: #e7f0e5;
+    color: #315d37;
+}
+
+.recovery-message--error {
+    background: #fff0eb;
+    color: #9b3929;
+}
+
+.recovery-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #87928b;
+    text-align: center;
+}
+
+.recovery-divider span {
+    height: 1px;
+    flex: 1;
+    background: #d5ddd4;
+}
+
+.recovery-divider p {
+    max-width: 90px;
+    margin: 0;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.recovery-footer {
+    margin: 26px auto 0;
+    color: var(--recovery-muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .recovery-flow {
+        grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .recovery-card {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 700px) {
+    .recovery-page {
+        padding: 0 18px 32px;
+    }
+
+    .recovery-header {
+        min-height: 64px;
+    }
+
+    .recovery-brand {
+        font-size: 14px;
+    }
+
+    .recovery-back {
+        max-width: 110px;
+        font-size: 10px;
+        text-align: right;
+    }
+
+    .recovery-intro {
+        margin: 36px auto 24px;
+    }
+
+    .recovery-intro h1 {
+        font-size: 35px;
+    }
+
+    .recovery-flow {
+        max-width: 480px;
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .recovery-card {
+        padding: 24px 20px;
+    }
+
+    .recovery-divider {
+        padding: 18px 0;
+    }
+
+    .recovery-divider p {
+        max-width: none;
+        white-space: nowrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .recovery-field input,
+    .recovery-submit {
+        transition: none;
+    }
+}
