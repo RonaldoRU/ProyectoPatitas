@@ -1,12 +1,12 @@
 
 FROM php:8.3-apache
 
+
 RUN apt-get update && apt-get install -y \
     git unzip curl zip \
     libicu-dev libzip-dev libxml2-dev \
     libonig-dev libpng-dev \
-    && docker-php-ext-install \
-       pdo_mysql mbstring bcmath intl zip gd opcache \
+    && docker-php-ext-install \pdo_mysql mbstring bcmath intl zip gd opcache \
     && for module in /etc/apache2/mods-enabled/mpm_*.load; do \
         [ -e "$module" ] || continue; \
         module_name="${module##*/}"; \
@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     && apache2ctl -t \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
