@@ -2,7 +2,7 @@
 services:
   app:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
     container_name: patitas_app
     restart: unless-stopped
@@ -17,7 +17,7 @@ services:
       DB_PORT: 3306
       DB_DATABASE: proyecto
       DB_USERNAME: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-patitas_local_root_2026}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       SESSION_DRIVER: database
       CACHE_STORE: database
       QUEUE_CONNECTION: database
@@ -30,13 +30,12 @@ services:
     container_name: patitas_db
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-patitas_local_root_2026}
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       MARIADB_DATABASE: proyecto
     ports:
       - "127.0.0.1:3307:3306"
     volumes:
       - patitas_db_data:/var/lib/mysql
-      - ./backups/proyecto_20261012_162620.sql:/docker-entrypoint-initdb.d/01-proyecto.sql:ro
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s

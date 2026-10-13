@@ -6,8 +6,15 @@ RUN apt-get update && apt-get install -y \
     libonig-dev libpng-dev \
     && docker-php-ext-install \
        pdo_mysql mbstring bcmath intl zip gd opcache \
-    && (a2dismod mpm_event mpm_worker || true) \
+    && for module in /etc/apache2/mods-enabled/mpm_*.load; do \
+        [ -e "$module" ] || continue; \
+        module_name="${module##*/}"; \
+        module_name="${module_name%.load}"; \
+        [ "$module_name" = "mpm_prefork" ] || a2dismod "$module_name"; \
+    done \
     && a2enmod mpm_prefork rewrite headers \
+    && [ "$(find /etc/apache2/mods-enabled -maxdepth 1 -type l -name 'mpm_*.load' | wc -l)" -eq 1 ] \
+    && apache2ctl -t \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
