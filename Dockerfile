@@ -1,4 +1,4 @@
-﻿FROM php:8.3-apache
+FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
     git unzip curl zip \
@@ -56,4 +56,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["bash", "-lc", "for m in mpm_event mpm_worker; do a2dismod $m 2>/dev/null || true; done; a2enmod mpm_prefork; apache2ctl -t; exec apache2-foreground"]
