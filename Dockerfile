@@ -38,6 +38,9 @@ RUN sed -ri \
     /etc/apache2/apache2.conf \
     /etc/apache2/conf-available/*.conf
 
+RUN echo "ServerName proyectopatitas-production-5289.up.railway.app" > /etc/apache2/conf-available/servername.conf \
+ && a2enconf servername
+
 COPY composer.json composer.lock ./
 COPY package.json package-lock.json ./
 
