@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     done \
     && a2enmod mpm_prefork rewrite headers \
     && [ "$(find /etc/apache2/mods-enabled -maxdepth 1 -type l -name 'mpm_*.load' | wc -l)" -eq 1 ] \
+    && apache2ctl -M 2>&1 | grep -q 'mpm_prefork_module' \
     && apache2ctl -t \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
