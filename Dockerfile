@@ -123,4 +123,4 @@ RUN mkdir -p \
 EXPOSE 80
 
 # Mantener Apache ejecutándose en primer plano
-CMD ["apache2-foreground"]
+CMD ["bash", "-lc", "set -eu; for f in /etc/apache2/mods-enabled/mpm_*.load; do [ -e \"$f\" ] || continue; m=\"${f##*/}\"; m=\"${m%.load}\"; if [ \"$m\" != \"mpm_prefork\" ]; then a2dismod \"$m\"; fi; done; a2enmod mpm_prefork; apache2ctl -t; exec apache2-foreground"]
