@@ -4,11 +4,15 @@
 
 .git
 .gitignore
+.agents
+AGENTS.md
+.github
 
 node_modules
 vendor
 
 backups
+database/*.sqlite
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
@@ -16,6 +20,10 @@ storage/framework/views/*
 
 public/build
 public/hot
+public/compose.yaml
+public/.dockerignore
+storage/Dockerfile
 
 tests
 .phpunit.cache
+.phpunit.result.cache

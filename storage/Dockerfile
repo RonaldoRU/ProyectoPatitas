@@ -1,12 +1,12 @@
 
 FROM php:8.3-apache
 
-
 RUN apt-get update && apt-get install -y \
     git unzip curl zip \
     libicu-dev libzip-dev libxml2-dev \
     libonig-dev libpng-dev \
-    && docker-php-ext-install \pdo_mysql mbstring bcmath intl zip gd opcache \
+    && docker-php-ext-install \
+       pdo_mysql mbstring bcmath intl zip gd opcache \
     && for module in /etc/apache2/mods-enabled/mpm_*.load; do \
         [ -e "$module" ] || continue; \
         module_name="${module##*/}"; \
@@ -15,13 +15,13 @@ RUN apt-get update && apt-get install -y \
     done \
     && a2enmod mpm_prefork rewrite headers \
     && [ "$(find /etc/apache2/mods-enabled -maxdepth 1 -type l -name 'mpm_*.load' | wc -l)" -eq 1 ] \
+    && apache2ctl -M 2>&1 | grep -q 'mpm_prefork_module' \
     && apache2ctl -t \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o /tmp/nodesource.sh \
     && bash /tmp/nodesource.sh \
     && apt-get update \

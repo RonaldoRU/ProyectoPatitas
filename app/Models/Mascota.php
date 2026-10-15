@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mascota extends Model
 {
@@ -17,5 +18,9 @@ class Mascota extends Model
         'zona_rescate',
         'foto',
     ];
-    //
+
+    public function historialesClinicos(): HasMany
+    {
+        return $this->hasMany(HistorialClinico::class, 'id_mascota');
+    }
 }

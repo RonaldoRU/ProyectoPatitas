@@ -13,5 +13,4 @@ class ArticuloInventario extends Model
         'stock_actual',
         'stock_minimo_alerta',
     ];
-    //
 }

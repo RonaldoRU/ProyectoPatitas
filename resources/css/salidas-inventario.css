@@ -1,0 +1,9 @@
+.stockout-line__fields {
+    grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) auto;
+}
+
+@media (max-width: 760px) {
+    .stockout-line__fields {
+        grid-template-columns: 1fr;
+    }
+}

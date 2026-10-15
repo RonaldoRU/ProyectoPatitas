@@ -1,9 +1,15 @@
 <?php
 
+use App\Http\Controllers\AjusteInventarioController;
+use App\Http\Controllers\ArticuloInventarioController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EntradaInsumoController;
+use App\Http\Controllers\HistorialClinicoController;
 use App\Http\Controllers\PostulanteController;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\SalidaInventarioController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +29,37 @@ Route::post('/restablecer-password', [AuthController::class, 'restablecerPasswor
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+
+    Route::apiResource('articulos-inventario', ArticuloInventarioController::class)
+        ->only(['index', 'store', 'update'])
+        ->parameters(['articulos-inventario' => 'articuloInventario'])
+        ->names('api.articulos-inventario');
+    Route::get('/ajustes-inventario', [AjusteInventarioController::class, 'index'])
+        ->name('api.ajustes-inventario.index');
+    Route::post('/ajustes-inventario', [AjusteInventarioController::class, 'store'])
+        ->name('api.ajustes-inventario.store');
+
+    Route::get('/proveedores', [ProveedorController::class, 'index'])->name('api.proveedores.index');
+    Route::post('/proveedores', [ProveedorController::class, 'store'])->name('api.proveedores.store');
+    Route::patch('/proveedores/{proveedor}', [ProveedorController::class, 'update'])
+        ->name('api.proveedores.update');
+    Route::patch('/proveedores/{proveedor}/estado', [ProveedorController::class, 'setStatus'])
+        ->name('api.proveedores.status');
+
+    Route::get('/entradas-insumos/catalogos', [EntradaInsumoController::class, 'catalogos'])
+        ->name('api.entradas-insumos.catalogos');
+    Route::post('/entradas-insumos', [EntradaInsumoController::class, 'store'])
+        ->name('api.entradas-insumos.store');
+
+    Route::get('/salidas-inventario/catalogos', [SalidaInventarioController::class, 'catalogos'])
+        ->name('api.salidas-inventario.catalogos');
+    Route::post('/salidas-inventario', [SalidaInventarioController::class, 'store'])
+        ->name('api.salidas-inventario.store');
+
+    Route::get('/atenciones-clinicas/catalogos', [HistorialClinicoController::class, 'catalogos'])
+        ->name('api.atenciones-clinicas.catalogos');
+    Route::post('/atenciones-clinicas', [HistorialClinicoController::class, 'store'])
+        ->name('api.atenciones-clinicas.store');
 
     Route::get('/bitacora', [BitacoraController::class, 'index'])->name('api.bitacora.index');
 

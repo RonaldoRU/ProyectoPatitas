@@ -2,8 +2,12 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { dashboard as dashboardPage, login as loginPage } from '@/routes';
 import { dashboard as dashboardApi } from '@/routes/api';
+import { index as inventoryPage } from '@/routes/articulos-inventario';
+import { index as clinicalPage } from '@/routes/atenciones-clinicas';
 import { index as auditPage } from '@/routes/bitacora';
+import { index as entryPage } from '@/routes/entradas-insumos';
 import { index as applicantsPage } from '@/routes/postulantes';
+import { index as stockoutPage } from '@/routes/salidas-inventario';
 import { index as usersPage } from '@/routes/usuarios';
 import authService from '@/services/authService';
 import type {AuthenticatedUser} from '@/services/authService';
@@ -23,7 +27,22 @@ type DashboardData = {
         fecha_ingreso: string;
         estado_actual: string;
     }>;
+    alertas_vencimiento: {
+        proximos: ExpiryAlert[];
+        vencidos: ExpiryAlert[];
+        sin_fecha: ExpiryAlert[];
+    };
     user: Pick<AuthenticatedUser, 'nombre' | 'rol'>;
+};
+
+type ExpiryAlert = {
+    id: number;
+    articulo: string;
+    origen: string;
+    fecha_vencimiento: string | null;
+    dias_restantes: number | null;
+    cantidad_disponible: string;
+    unidad_medida: string;
 };
 
 const emptyStats: DashboardData['stats'] = {
@@ -114,7 +133,8 @@ export default function Dashboard() {
                 const result = (await response.json()) as DashboardData;
 
                 if (active) {
-setData(result);
+    setData(result);
+    setError('');
 }
             } catch (cause) {
                 if (active) {
@@ -126,15 +146,19 @@ setData(result);
                 }
             } finally {
                 if (active) {
-setLoading(false);
+    setLoading(false);
 }
             }
         }
 
         void loadDashboard();
+        const intervalId = window.setInterval(() => {
+            void loadDashboard();
+        }, 60_000);
 
         return () => {
             active = false;
+            window.clearInterval(intervalId);
         };
     }, []);
 
@@ -157,6 +181,11 @@ await authService.logout(token);
     const stats = data?.stats ?? emptyStats;
     const user = data?.user ?? { nombre: 'Cargando...', rol: '' };
     const firstName = user.nombre.trim().split(/\s+/)[0] || 'equipo';
+    const expiryGroups: Array<{ key: string; title: string; alerts: ExpiryAlert[] }> = [
+        { key: 'vencidos', title: 'Vencidos', alerts: data?.alertas_vencimiento.vencidos ?? [] },
+        { key: 'proximos', title: 'Vencen en 30 días', alerts: data?.alertas_vencimiento.proximos ?? [] },
+        { key: 'sin_fecha', title: 'Sin fecha de vencimiento', alerts: data?.alertas_vencimiento.sin_fecha ?? [] },
+    ];
 
     return (
         <>
@@ -202,19 +231,27 @@ await authService.logout(token);
                             </svg>
                             <span>Postulantes</span>
                         </Link>
-                        <Link className="dashboard-nav__item" href={`${dashboardPage.url()}#inventario`}>
+                        <Link className="dashboard-nav__item" href={inventoryPage.url()}>
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" />
                                 <path d="m4.5 7.8 7.5 4.3 7.5-4.3M12 12v8.5M8 5.3l8 4.6" />
                             </svg>
                             <span>Inventario</span>
                         </Link>
-                        <span className="dashboard-nav__item dashboard-nav__item--disabled" aria-disabled="true">
+                        <Link className="dashboard-nav__item" href={entryPage.url()}>
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M4 7h16v12H4zM7 7V4h10v3M8 11h8M8 15h5" />
                             </svg>
-                            <span>Donaciones</span>
-                        </span>
+                            <span>Entradas</span>
+                        </Link>
+                        <Link className="dashboard-nav__item" href={stockoutPage.url()}>
+                            <span aria-hidden="true">↗</span>
+                            <span>Salidas</span>
+                        </Link>
+                        <Link className="dashboard-nav__item" href={clinicalPage.url()}>
+                            <span aria-hidden="true">✚</span>
+                            <span>Atención clínica</span>
+                        </Link>
                         <Link className="dashboard-nav__item" href={usersPage.url()}>
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <rect x="4" y="5" width="16" height="14" rx="1" />
@@ -320,6 +357,46 @@ await authService.logout(token);
                                 <span className="dashboard-stat__detail">Productos bajo mínimo</span>
                             </article>
                         </section>
+
+                        {(user.rol === 'Administrador' || user.rol === 'Veterinario') && (
+                            <section className="dashboard-expiry" aria-label="Alertas de vencimiento de medicamentos">
+                                <div className="dashboard-section-heading">
+                                    <div>
+                                        <p className="dashboard-eyebrow">Control de medicamentos</p>
+                                        <h2>Vencimientos y lotes por revisar</h2>
+                                    </div>
+                                </div>
+                                {loading ? (
+                                    <p className="dashboard-expiry__empty" role="status">Cargando alertas…</p>
+                                ) : (
+                                    <div className="dashboard-expiry__grid">
+                                        {expiryGroups.map(({ key, title, alerts }) => (
+                                            <article className={`dashboard-expiry__group dashboard-expiry__group--${key}`} key={key}>
+                                                <h3>{title} <span>{alerts.length}</span></h3>
+                                                {alerts.length === 0 ? (
+                                                    <p className="dashboard-expiry__empty">Sin lotes pendientes.</p>
+                                                ) : (
+                                                    <ul>
+                                                        {alerts.map((alert) => (
+                                                            <li key={alert.id}>
+                                                                <strong>{alert.articulo}</strong>
+                                                                <span>
+                                                                    {alert.fecha_vencimiento
+                                                                        ? `Vence: ${formatDate(alert.fecha_vencimiento)}`
+                                                                        : 'Fecha no registrada'}
+                                                                    {' · '}{alert.cantidad_disponible} {alert.unidad_medida}
+                                                                </span>
+                                                                <small>Lote #{alert.id} · {alert.origen}</small>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </article>
+                                        ))}
+                                    </div>
+                                )}
+                            </section>
+                        )}
 
                         <section className="dashboard-intakes" id="ingresos">
                             <div className="dashboard-section-heading">

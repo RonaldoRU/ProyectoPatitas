@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArticuloInventario;
+use App\Services\InventarioLotesService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function getDashboardData(Request $request): JsonResponse
+    public function getDashboardData(Request $request, InventarioLotesService $inventario): JsonResponse
     {
         $today = Carbon::now();
 
@@ -26,9 +28,7 @@ class DashboardController extends Controller
                     $today->copy()->endOfMonth()->toDateString(),
                 ])
                 ->count(),
-            'alertas_stock' => DB::table('articulo_inventarios')
-                ->whereRaw('stock_actual <= stock_minimo_alerta')
-                ->count(),
+            'alertas_stock' => $this->countLowStockAlerts($inventario),
         ];
 
         $ultimosIngresos = DB::table('mascotas')
@@ -38,14 +38,29 @@ class DashboardController extends Controller
             ->get();
 
         $user = $request->user();
+        $puedeVerVencimientos = in_array($user?->rol, ['Administrador', 'Veterinario'], true);
 
         return response()->json([
             'stats' => $stats,
             'ultimos_ingresos' => $ultimosIngresos,
+            'alertas_vencimiento' => $puedeVerVencimientos
+                ? $inventario->alertas($today)
+                : ['proximos' => [], 'vencidos' => [], 'sin_fecha' => []],
             'user' => [
                 'nombre' => $user?->nombre ?? 'Administrador',
                 'rol' => $user?->rol ?? 'Staff',
             ],
         ]);
+    }
+
+    private function countLowStockAlerts(InventarioLotesService $inventario): int
+    {
+        $articulos = ArticuloInventario::query()
+            ->select(['id', 'categoria', 'stock_actual', 'stock_minimo_alerta'])
+            ->get();
+        $stocksDisponibles = $inventario->stocksDisponibles($articulos);
+
+        return $articulos->filter(fn (ArticuloInventario $articulo): bool => ($stocksDisponibles[$articulo->getKey()] ?? 0) / 100
+            <= (float) $articulo->stock_minimo_alerta)->count();
     }
 }

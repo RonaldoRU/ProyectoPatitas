@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\InventarioLote;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -61,24 +62,30 @@ test('dashboard returns current shelter metrics for an authenticated user', func
     ]);
 
     DB::table('articulo_inventarios')->insert([
-        [
-            'nombre' => 'Alimento',
-            'categoria' => 'Alimento',
-            'unidad_medida' => 'Bolsa',
-            'stock_actual' => 2,
-            'stock_minimo_alerta' => 5,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ],
-        [
-            'nombre' => 'Medicamento',
-            'categoria' => 'Medicamento',
-            'unidad_medida' => 'Frasco',
-            'stock_actual' => 8,
-            'stock_minimo_alerta' => 3,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ],
+        'nombre' => 'Alimento',
+        'categoria' => 'Alimento',
+        'unidad_medida' => 'Bolsa',
+        'stock_actual' => 2,
+        'stock_minimo_alerta' => 5,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $medicineId = DB::table('articulo_inventarios')->insertGetId([
+        'nombre' => 'Medicamento',
+        'categoria' => 'Medicamento',
+        'unidad_medida' => 'Frasco',
+        'stock_actual' => 8,
+        'stock_minimo_alerta' => 3,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    InventarioLote::query()->create([
+        'id_articulo' => $medicineId,
+        'fecha_vencimiento' => now()->addYear()->toDateString(),
+        'cantidad_inicial' => 8,
+        'cantidad_disponible' => 8,
     ]);
 
     $response = $this->withToken($user->createToken('dashboard-test')->plainTextToken)

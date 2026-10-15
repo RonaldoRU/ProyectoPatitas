@@ -2,8 +2,12 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { dashboard as dashboardPage, login as loginPage } from '@/routes';
+import { index as inventoryPage } from '@/routes/articulos-inventario';
+import { index as clinicalPage } from '@/routes/atenciones-clinicas';
 import { index as auditPage } from '@/routes/bitacora';
+import { index as entryPage } from '@/routes/entradas-insumos';
 import { index as applicantsPage } from '@/routes/postulantes';
+import { index as stockoutPage } from '@/routes/salidas-inventario';
 import { index as usersPage } from '@/routes/usuarios';
 import postulanteService from '@/services/postulanteService';
 import type {
@@ -274,14 +278,22 @@ export default function Postulantes() {
                             <span className="user-nav-icon" aria-hidden="true">♧</span>
                             <span>Postulantes</span>
                         </Link>
-                        <Link className="dashboard-nav__item" href={`${dashboardPage.url()}#inventario`}>
+                        <Link className="dashboard-nav__item" href={inventoryPage.url()}>
                             <span className="user-nav-icon" aria-hidden="true">◇</span>
                             <span>Inventario</span>
                         </Link>
-                        <span className="dashboard-nav__item dashboard-nav__item--disabled" aria-disabled="true">
+                        <Link className="dashboard-nav__item" href={entryPage.url()}>
                             <span className="user-nav-icon" aria-hidden="true">▤</span>
-                            <span>Donaciones</span>
-                        </span>
+                            <span>Entradas</span>
+                        </Link>
+                        <Link className="dashboard-nav__item" href={stockoutPage.url()}>
+                            <span className="user-nav-icon" aria-hidden="true">↗</span>
+                            <span>Salidas</span>
+                        </Link>
+                        <Link className="dashboard-nav__item" href={clinicalPage.url()}>
+                            <span className="user-nav-icon" aria-hidden="true">✚</span>
+                            <span>Atención clínica</span>
+                        </Link>
                         <Link className="dashboard-nav__item" href={usersPage.url()}>
                             <span className="user-nav-icon" aria-hidden="true">▣</span>
                             <span>Usuarios</span>

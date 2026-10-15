@@ -1,40 +1,76 @@
+﻿
+x-app-environment: &app-environment
+  APP_NAME: ${APP_NAME:-Los Angelitos de Edgar}
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_KEY: ${APP_KEY:?Set APP_KEY in .env}
+  APP_URL: ${APP_URL:-http://localhost:8000}
+  LOG_CHANNEL: stderr
+  DB_CONNECTION: mysql
+  DB_HOST: db
+  DB_PORT: 3306
+  DB_DATABASE: ${DB_DATABASE:-proyecto}
+  DB_USERNAME: ${DB_APP_USER:-patitas_app}
+  DB_PASSWORD: ${DB_APP_PASSWORD:?Set DB_APP_PASSWORD in .env}
+  SESSION_DRIVER: database
+  CACHE_STORE: database
+  QUEUE_CONNECTION: database
+  FILESYSTEM_DISK: local
+
+x-app: &app
+  image: proyecto-patitas:local
+  build:
+    context: .
+    dockerfile: Dockerfile
+  init: true
+  restart: unless-stopped
+  environment: *app-environment
+  volumes:
+    - patitas_storage:/var/www/html/storage
+  depends_on:
+    db:
+      condition: service_healthy
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: patitas_app
-    restart: unless-stopped
+    <<: *app
     ports:
-      - "8000:80"
-    environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      APP_URL: http://localhost:8000
-      APP_KEY: ${APP_KEY}
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: proyecto
-      DB_USERNAME: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-      SESSION_DRIVER: database
-      CACHE_STORE: database
-      QUEUE_CONNECTION: database
-    depends_on:
-      db:
-        condition: service_healthy
+      - "${APP_PORT:-8000}:80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/up >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  queue-worker:
+    <<: *app
+    stop_grace_period: 70s
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=60"]
+
+  scheduler:
+    <<: *app
+    command: ["php", "artisan", "schedule:work"]
+
+  migrate:
+    <<: *app
+    profiles: ["maintenance"]
+    restart: "no"
+    command: ["php", "artisan", "migrate", "--force"]
 
   db:
     image: mariadb:10.11
-    container_name: patitas_db
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-      MARIADB_DATABASE: proyecto
+      MARIADB_DATABASE: ${DB_DATABASE:-proyecto}
+      MARIADB_USER: ${DB_APP_USER:-patitas_app}
+      MARIADB_PASSWORD: ${DB_APP_PASSWORD:?Set DB_APP_PASSWORD in .env}
     ports:
-      - "127.0.0.1:3307:3306"
+      - target: 3306
+        published: "${DB_HOST_PORT:-3307}"
+        host_ip: 127.0.0.1
+        protocol: tcp
     volumes:
       - patitas_db_data:/var/lib/mysql
     healthcheck:
@@ -46,3 +82,7 @@ services:
 
 volumes:
   patitas_db_data:
+    name: proyecto_patitas_db_data
+  patitas_storage:
+    external: true
+    name: proyecto_patitas_storage

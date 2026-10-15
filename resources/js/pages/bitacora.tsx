@@ -2,8 +2,12 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { dashboard as dashboardPage, login as loginPage } from '@/routes';
+import { index as inventoryPage } from '@/routes/articulos-inventario';
+import { index as clinicalPage } from '@/routes/atenciones-clinicas';
 import { index as auditPage } from '@/routes/bitacora';
+import { index as entryPage } from '@/routes/entradas-insumos';
 import { index as applicantsPage } from '@/routes/postulantes';
+import { index as stockoutPage } from '@/routes/salidas-inventario';
 import { index as usersPage } from '@/routes/usuarios';
 import bitacoraService from '@/services/bitacoraService';
 import type { AuditEntry, AuditFilters, AuditPage } from '@/services/bitacoraService';
@@ -161,14 +165,22 @@ export default function Bitacora() {
                             <span aria-hidden="true">♧</span>
                             <span>Postulantes</span>
                         </Link>
-                        <Link className="dashboard-nav__item" href={`${dashboardPage.url()}#inventario`}>
+                        <Link className="dashboard-nav__item" href={inventoryPage.url()}>
                             <span aria-hidden="true">◇</span>
                             <span>Inventario</span>
                         </Link>
-                        <span className="dashboard-nav__item dashboard-nav__item--disabled" aria-disabled="true">
+                        <Link className="dashboard-nav__item" href={entryPage.url()}>
                             <span aria-hidden="true">▤</span>
-                            <span>Donaciones</span>
-                        </span>
+                            <span>Entradas</span>
+                        </Link>
+                        <Link className="dashboard-nav__item" href={stockoutPage.url()}>
+                            <span aria-hidden="true">↗</span>
+                            <span>Salidas</span>
+                        </Link>
+                        <Link className="dashboard-nav__item" href={clinicalPage.url()}>
+                            <span aria-hidden="true">✚</span>
+                            <span>Atención clínica</span>
+                        </Link>
                         <Link className="dashboard-nav__item" href={usersPage.url()}>
                             <span aria-hidden="true">▣</span>
                             <span>Usuarios</span>

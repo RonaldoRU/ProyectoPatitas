@@ -21,10 +21,11 @@ class AuditoriaService
         ?Model $entidad = null,
         ?string $descripcion = null,
         ?array $contexto = null,
+        ?string $nombreUsuario = null,
     ): Bitacora {
         return Bitacora::query()->create([
             'id_usuario' => $usuario?->getKey(),
-            'usuario_nombre' => $usuario?->nombre ?? 'No autenticado',
+            'usuario_nombre' => $usuario?->nombre ?? $nombreUsuario ?? 'No autenticado',
             'tipo_accion' => $accion,
             'modulo' => $modulo,
             'descripcion' => $descripcion ?? $accion,
