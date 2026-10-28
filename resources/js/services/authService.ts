@@ -40,6 +40,14 @@ function buildLoginError(result: ErrorResponse, fallback: string): Error {
 }
 
 const authService = {
+    getToken(): string | null {
+        if (typeof window === 'undefined') {
+            return null;
+        }
+
+        return localStorage.getItem('token');
+    },
+
     async login(usuario: string, password: string): Promise<LoginResponse> {
         const response = await fetch(loginRoute.url(), {
             method: 'POST',

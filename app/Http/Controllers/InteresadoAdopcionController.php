@@ -2,64 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InteresadoAdopcion;
-use Illuminate\Http\Request;
+use App\Http\Controllers\P8_Adopciones\InteresadoAdopcionController as BaseInteresadoAdopcionController;
 
-class InteresadoAdopcionController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(InteresadoAdopcion $interesadoAdopcion)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(InteresadoAdopcion $interesadoAdopcion)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, InteresadoAdopcion $interesadoAdopcion)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(InteresadoAdopcion $interesadoAdopcion)
-    {
-        //
-    }
-}
+class InteresadoAdopcionController extends BaseInteresadoAdopcionController {}

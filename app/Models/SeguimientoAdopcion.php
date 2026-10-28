@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SeguimientoAdopcion extends Model
 {
@@ -17,4 +18,14 @@ class SeguimientoAdopcion extends Model
         'id_adopcion',
         'id_usuario',
     ];
+
+    public function adopcion(): BelongsTo
+    {
+        return $this->belongsTo(Adopcion::class, 'id_adopcion');
+    }
+
+    public function usuario(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
 }

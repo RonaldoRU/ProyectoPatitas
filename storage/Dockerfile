@@ -57,4 +57,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["bash", "-lc", "set -eu; for f in /etc/apache2/mods-enabled/mpm_*.load; do [ -e \"$f\" ] || continue; m=\"${f##*/}\"; m=\"${m%.load}\"; if [ \"$m\" != \"mpm_prefork\" ]; then a2dismod \"$m\"; fi; done; a2enmod mpm_prefork; apache2ctl -t; exec apache2-foreground"]

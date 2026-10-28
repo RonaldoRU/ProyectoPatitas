@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\SeguimientoAdopcion;
+use Illuminate\Database\Seeder;
 
 class seguimiento_adopcionSeeder extends Seeder
 {

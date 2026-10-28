@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,14 +21,19 @@ return new class extends Migration
             });
         }
 
-        Schema::table('users', function (Blueprint $table): void {
-            $table->enum('rol', [
-                'Administrador',
-                'Veterinario',
-                'Recepcionista',
-                'Voluntario',
-            ])->change();
-        });
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_rol_check');
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_rol_check CHECK (rol IN ('Administrador', 'Veterinario', 'Recepcionista', 'Voluntario'))");
+        } else {
+            Schema::table('users', function (Blueprint $table): void {
+                $table->enum('rol', [
+                    'Administrador',
+                    'Veterinario',
+                    'Recepcionista',
+                    'Voluntario',
+                ])->change();
+            });
+        }
 
         if (Schema::hasColumn('password_reset_tokens', 'correo') && ! Schema::hasColumn('password_reset_tokens', 'email')) {
             Schema::table('password_reset_tokens', function (Blueprint $table): void {
@@ -45,9 +51,13 @@ return new class extends Migration
         }
 
         if (Schema::hasColumn('users', 'nombre') && ! Schema::hasColumn('users', 'user_name')) {
-            Schema::table('users', function (Blueprint $table): void {
-                $table->string('rol')->change();
-            });
+            if (DB::connection()->getDriverName() === 'pgsql') {
+                DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_rol_check');
+            } else {
+                Schema::table('users', function (Blueprint $table): void {
+                    $table->string('rol')->change();
+                });
+            }
 
             Schema::table('users', function (Blueprint $table): void {
                 $table->renameColumn('nombre', 'user_name');

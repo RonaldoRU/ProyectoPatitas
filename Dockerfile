@@ -1,10 +1,9 @@
-
 # =========================================================
-# ETAPA 1: PHP + APACHE
+# ETAPA 1: PHP + APACHE CON SOPORTE MYSQL Y POSTGRESQL
 # =========================================================
 FROM php:8.3-apache AS php-base
 
-# Instalar dependencias y extensiones PHP necesarias para Laravel
+# Instalar dependencias del sistema y extensiones PHP (incluyendo PostgreSQL)
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -16,9 +15,12 @@ RUN set -eux; \
         libzip-dev \
         libxml2-dev \
         libonig-dev \
-        libpng-dev; \
+        libpng-dev \
+        libpq-dev; \
     docker-php-ext-install \
         pdo_mysql \
+        pdo_pgsql \
+        pgsql \
         mbstring \
         bcmath \
         intl \
@@ -33,11 +35,7 @@ RUN set -eux; \
         a2dismod "$module_name" || true; \
     done; \
     a2enmod mpm_prefork rewrite headers; \
-    enabled_mpm="$(find /etc/apache2/mods-enabled -maxdepth 1 -type l -name 'mpm_*.load' | wc -l)"; \
-    test "$enabled_mpm" -eq 1; \
-    apache2ctl -M 2>&1 | grep -q 'mpm_prefork_module'; \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf; \
-    apache2ctl -t; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
@@ -50,49 +48,48 @@ RUN sed -ri \
     /etc/apache2/apache2.conf \
     /etc/apache2/conf-available/*.conf
 
-# Configurar el nombre del servidor sin depender del dominio de Railway
 RUN echo "ServerName localhost" \
     > /etc/apache2/conf-available/servername.conf \
-    && a2enconf servername \
-    && apache2ctl -t
+    && a2enconf servername
 
 
 # =========================================================
-# ETAPA 2: CONSTRUIR LARAVEL Y REACT
+# ETAPA 2: CONSTRUIR DEPENDENCIAS Y FRONTEND (REACT / VITE)
 # =========================================================
 FROM php-base AS build
 
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Instalar Node.js 24 para compilar React
-RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o /tmp/nodesource.sh \
+# Instalar Node.js 22 LTS para compilar assets de frontend
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o /tmp/nodesource.sh \
     && bash /tmp/nodesource.sh \
     && apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
-    && node --version \
-    && npm --version \
     && rm -f /tmp/nodesource.sh \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Carpeta de trabajo del proyecto
 WORKDIR /var/www/html
 
-# Copiar primero los archivos de dependencias
+# Copiar archivos de dependencias primero para aprovechar cache de Docker
 COPY composer.json composer.lock package.json package-lock.json ./
-
-# Copiar el resto del proyecto Laravel + React
-COPY . .
 
 # Instalar dependencias PHP de producción
 RUN composer install \
     --no-interaction \
     --prefer-dist \
     --no-dev \
+    --no-scripts \
     --optimize-autoloader
 
-# Instalar dependencias de React y compilar los archivos del frontend
+# Copiar todo el código fuente
+COPY . .
+
+# Ejecutar autoloader y scripts una vez que el código y artisan están presentes
+RUN composer dump-autoload --optimize
+
+# Instalar dependencias de frontend y compilar
 RUN npm ci \
     && npm run build \
     && rm -rf node_modules
@@ -105,10 +102,14 @@ FROM php-base AS runtime
 
 WORKDIR /var/www/html
 
-# Copiar la aplicación construida y asignar permisos
+# Copiar proyecto compilado
 COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
 
-# Preparar directorios que Laravel necesita para funcionar
+# Copiar script de arranque
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Directorios de Laravel y permisos
 RUN mkdir -p \
         storage/framework/cache/data \
         storage/framework/sessions \
@@ -116,11 +117,8 @@ RUN mkdir -p \
         storage/logs \
         bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R ug+rwX storage bootstrap/cache \
-    && apache2ctl -t
+    && chmod -R ug+rwX storage bootstrap/cache
 
-# Apache escucha en el puerto 80 dentro del contenedor
 EXPOSE 80
 
-# Mantener Apache ejecutándose en primer plano
-CMD ["bash", "-lc", "set -eu; for f in /etc/apache2/mods-enabled/mpm_*.load; do [ -e \"$f\" ] || continue; m=\"${f##*/}\"; m=\"${m%.load}\"; if [ \"$m\" != \"mpm_prefork\" ]; then a2dismod \"$m\"; fi; done; a2enmod mpm_prefork; apache2ctl -t; exec apache2-foreground"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

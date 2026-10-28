@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ArticuloInventario extends Model
 {
@@ -13,4 +14,9 @@ class ArticuloInventario extends Model
         'stock_actual',
         'stock_minimo_alerta',
     ];
+
+    public function lotes(): HasMany
+    {
+        return $this->hasMany(InventarioLote::class, 'id_articulo');
+    }
 }
