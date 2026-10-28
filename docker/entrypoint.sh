@@ -32,10 +32,17 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
 
-# Ejecutar migraciones automáticamente si hay conexión a la base de datos configurada
+# Ejecutar migraciones y carga inicial automáticamente si hay conexión a la base de datos
 if [ -n "$DATABASE_URL" ] || [ -n "$DB_HOST" ] || [ -n "$PGHOST" ]; then
     echo ">> Ejecutando migraciones de base de datos..."
-    php artisan migrate --force --isolated || echo ">> Aviso: No se pudieron ejecutar migraciones automáticas en este inicio."
+    php artisan migrate --force || echo ">> Aviso: No se pudieron ejecutar migraciones automáticas en este inicio."
+
+    # Si la base de datos no tiene usuarios, sembrar datos iniciales automáticamente
+    USERS_COUNT=$(php -r 'require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $k = $app->make(Illuminate\Contracts\Console\Kernel::class); $k->bootstrap(); try { echo \App\Models\User::count(); } catch (\Throwable $e) { echo -1; }' 2>/dev/null || echo -1)
+    if [ "$USERS_COUNT" = "0" ]; then
+        echo ">> Base de datos inicial vacía detectada. Ejecutando seeders iniciales..."
+        php artisan db:seed --force || echo ">> Aviso: Falló la siembra inicial de datos."
+    fi
 fi
 
 # Optimizar caches de Laravel en producción
@@ -44,6 +51,15 @@ if [ "${APP_ENV:-production}" = "production" ]; then
     php artisan config:cache || true
     php artisan route:cache || true
     php artisan view:cache || true
+fi
+
+# ==============================================================================
+# Prevenir error AH00534: apache2: Configuration error: More than one MPM loaded
+# ==============================================================================
+echo ">> Verificando módulos MPM de Apache..."
+rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* 2>/dev/null || true
+if [ ! -f /etc/apache2/mods-enabled/mpm_prefork.load ]; then
+    a2enmod mpm_prefork || true
 fi
 
 # Verificar sintaxis de configuración de Apache

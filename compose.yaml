@@ -1,3 +1,5 @@
+name: los-angelitos-de-edgar
+
 x-app-environment: &app-environment
   APP_NAME: ${APP_NAME:-Los Angelitos de Edgar}
   APP_ENV: production
@@ -17,7 +19,7 @@ x-app-environment: &app-environment
   FILESYSTEM_DISK: local
 
 x-app: &app
-  image: proyecto-patitas:local
+  image: los-angelitos-de-edgar:latest
   build:
     context: .
     dockerfile: Dockerfile
@@ -33,32 +35,37 @@ x-app: &app
 services:
   app:
     <<: *app
+    container_name: los-angelitos-de-edgar-app
     ports:
       - "${APP_PORT:-8000}:80"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/up >/dev/null || exit 1"]
-      interval: 30s
+      interval: 15s
       timeout: 5s
-      retries: 3
-      start_period: 30s
+      retries: 5
+      start_period: 25s
 
   queue-worker:
     <<: *app
-    stop_grace_period: 70s
+    container_name: los-angelitos-de-edgar-queue
+    stop_grace_period: 30s
     command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=60"]
 
   scheduler:
     <<: *app
+    container_name: los-angelitos-de-edgar-scheduler
     command: ["php", "artisan", "schedule:work"]
 
   migrate:
     <<: *app
+    container_name: los-angelitos-de-edgar-migrate
     profiles: ["maintenance"]
     restart: "no"
     command: ["php", "artisan", "migrate", "--force"]
 
   db:
     image: postgres:16-alpine
+    container_name: los-angelitos-de-edgar-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_DATABASE:-perritos.Edgar}
@@ -71,6 +78,7 @@ services:
         protocol: tcp
     volumes:
       - patitas_pg_data:/var/lib/postgresql/data
+      - ./database/perritos_edgar_dump.sql:/docker-entrypoint-initdb.d/01-perritos-edgar.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-perritos.Edgar}"]
       interval: 5s
@@ -80,6 +88,6 @@ services:
 
 volumes:
   patitas_pg_data:
-    name: proyecto_patitas_pg_data
+    name: los_angelitos_de_edgar_pg_data
   patitas_storage:
-    name: proyecto_patitas_storage
+    name: los_angelitos_de_edgar_storage
