@@ -53,6 +53,11 @@ if [ "${APP_ENV:-production}" = "production" ]; then
     php artisan view:cache || true
 fi
 
+# Asegurar AllowOverride All para habilitar .htaccess de Laravel
+if [ -f /etc/apache2/apache2.conf ]; then
+    sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf 2>/dev/null || true
+fi
+
 # ==============================================================================
 # Prevenir error AH00534: apache2: Configuration error: More than one MPM loaded
 # ==============================================================================
