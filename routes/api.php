@@ -97,6 +97,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/adopciones/{adopcion}/acta', [AdopcionController::class, 'actaPdf'])->name('api.adopciones.acta');
 
     Route::get('/seguimientos', [SeguimientoAdopcionController::class, 'index'])->name('api.seguimientos.index');
+    Route::post('/seguimientos', [SeguimientoAdopcionController::class, 'store'])->name('api.seguimientos.store');
+    Route::get('/seguimientos/{seguimiento}', [SeguimientoAdopcionController::class, 'show'])->name('api.seguimientos.show');
     Route::patch('/seguimientos/{seguimiento}', [SeguimientoAdopcionController::class, 'update'])->name('api.seguimientos.update');
 
     // P9: Donaciones y Pasarela de Pagos
