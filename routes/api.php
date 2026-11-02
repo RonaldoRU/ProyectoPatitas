@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/donaciones', [DonacionController::class, 'store'])->name('api.donaciones.store');
 
     Route::post('/pasarela/iniciar', [PasarelaPagoController::class, 'iniciarPago'])->name('api.pasarela.iniciar');
+    Route::post('/pasarela/confirmar-tarjeta', [PasarelaPagoController::class, 'confirmarTarjeta'])->name('api.pasarela.confirmar-tarjeta');
     Route::post('/pasarela/confirmar-manual', [PasarelaPagoController::class, 'confirmarManual'])->name('api.pasarela.confirmar-manual');
     Route::get('/pasarela/comprobante/{id}', [PasarelaPagoController::class, 'generarComprobante'])->name('api.pasarela.comprobante');
     Route::get('/pasarela/conciliacion', [PasarelaPagoController::class, 'conciliacion'])->name('api.pasarela.conciliacion');
@@ -117,6 +118,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
     // P10: Indicadores Gerenciales
     Route::get('/dashboard', [DashboardController::class, 'getDashboardData'])->name('api.dashboard');
+    Route::get('/reportes-gerenciales', [ReporteGerencialController::class, 'index'])->name('api.reportes-gerenciales.index');
+    Route::get('/reportes-gerenciales/exportar', [ReporteGerencialController::class, 'exportar'])->name('api.reportes-gerenciales.exportar');
     Route::get('/reportes/indicadores', [ReporteGerencialController::class, 'index'])->name('api.reportes.indicadores');
     Route::get('/reportes/exportar', [ReporteGerencialController::class, 'exportar'])->name('api.reportes.exportar');
 });

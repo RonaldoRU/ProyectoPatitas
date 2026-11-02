@@ -1,46 +1,45 @@
-# Guía de Uso: Scripting para Enterprise Architect (JScript / JavaScript)
-## Diagramas de Comunicación UML para los 30 Casos de Uso (P1 a P10)
-### Sistema Web: Refugio "Los Angelitos de Edgar"
+# Scripts Automatizadores para Sparx Enterprise Architect (JScript)
+## Proyecto: Sistema Web para Refugio de Animales "Los Angelitos de Edgar"
 
-Este directorio contiene el script de automatización completo para **Sparx Enterprise Architect**:
-- **Archivo principal:** [`generar_diagramas_comunicacion_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_diagramas_comunicacion_ea.js)
+Este directorio contiene la suite completa de scripts en **JScript** diseñados para importar, modelar y generar diagramas de arquitectura, diseño y base de datos directamente en **Sparx Enterprise Architect**:
+
+### Catálogo de Scripts Disponibles
+
+1. **[`generar_diagramas_secuencia_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_diagramas_secuencia_ea.js)**:
+   - **Tipo:** Diagramas de Secuencia UML (`Sequence Diagram`).
+   - **Enfoque:** *Realización de caso de uso - diseño* para los 30 casos de uso.
+   - **Estructura de Líneas de Vida:** `Actor` -> `: Vista (Boundary)` -> `: Controlador (Control)` -> `: Gestor (Control/Service)` -> `: Entidades / Tablas (Entity)`.
+   - **Mensajes:** Flujos síncronos y asíncronos numerados con parámetros reales del sistema (ej: CU01 - Iniciar Sesión con `password_verify`, generación de sesión y registro en bitácora).
+
+2. **[`generar_arquitectura_subsistemas_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_arquitectura_subsistemas_ea.js)**:
+   - **Tipo:** Diagramas de Componentes / Arquitectura de Software por Subsistema (P1 a P10).
+   - **Patrón Visual:** Marco delimitador de subsistema, nivel superior «FORM» (vistas frontend), nivel intermedio «CLASS» (controladores backend PHP) con conectores socket/interfaz, y nivel inferior «Table» (tablas PostgreSQL) con líneas punteadas de dependencia.
+
+3. **[`generar_diagramas_comunicacion_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_diagramas_comunicacion_ea.js)**:
+   - **Tipo:** Diagramas de Comunicación UML (`Communication Diagram`) para los 30 casos de uso con objetos estereotipados PUDS y numeración secuencial de mensajes.
+
+4. **[`generar_diagrama_clases_bd_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_diagrama_clases_bd_ea.js)**:
+   - **Tipo:** Diagrama de Clases de la Base de Datos física con atributos, claves primarias, foráneas, tipos de datos y métodos funcionales mapeados a cada controlador.
+
+5. **[`base_de_datos_con_funcionalidades.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/base_de_datos_con_funcionalidades.js)**:
+   - **Tipo:** Catálogo estructurado en JavaScript con la definición completa de tablas, atributos y métodos implementados en el backend.
 
 ---
 
-### 1. ¿Qué genera este script en Enterprise Architect?
-Al ejecutarse en Enterprise Architect, el script crea automáticamente:
-1. **10 Sub-Paquetes** organizados según la arquitectura de análisis:
-   - `P1_Seguridad_Autenticacion`
-   - `P2_Administracion_Usuarios_RBAC`
-   - `P3_Auditoria_Bitacora`
-   - `P4_Catalogo_Existencias`
-   - `P5_Abastecimiento_Proveedores`
-   - `P6_Automatizacion_Clinica`
-   - `P7_Rescate_Historial_Clinico`
-   - `P8_Gestion_Adopciones_Seguimiento`
-   - `P9_Pasarela_Pagos_Donaciones`
-   - `P10_Indicadores_Gerenciales`
-2. **30 Diagramas de Comunicación UML (`Communication Diagram`)**, uno por cada caso de uso:
-   - Objetos estereotipados PUDS: **Actores**, **Boundaries** (Vistas/Interfaces), **Controls** (Controladores de Laravel) y **Entities** (Modelos Eloquent y Base de Datos).
-   - Enlaces de comunicación con **mensajes numerados secuencialmente** (`1: método()`, `2: consulta()`, etc.).
-   - Disposición visual proporcional y coordinada en el lienzo.
-
----
-
-### 2. Pasos para ejecutar en Enterprise Architect
+### Instrucciones Generales de Ejecución en Enterprise Architect
 
 1. Abra **Sparx Enterprise Architect** con su proyecto (`.eap`, `.eapx` o `.qea`).
-2. Abra la ventana de scripting:
+2. Abra la consola de scripting:
    - Menú: **Specialize** (o **Tools**) -> **Scripting**.
-   - O use el atajo de teclado: `Ctrl + F11` (o `Alt + 7`).
-3. En el panel de Scripting:
-   - Cree un nuevo Script haciendo clic derecho en **Local Scripts** o en su grupo de scripts -> **New JScript**.
-   - Asigne el nombre: `GeneradorDiagramasComunicacion`.
-4. Abra el script creado con doble clic, borre el contenido por defecto y **pegue el código de [`generar_diagramas_comunicacion_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_diagramas_comunicacion_ea.js)**.
-5. Guarde el script (`Ctrl + S`).
-6. En el **Project Browser** (árbol del proyecto a la izquierda), **haga clic sobre el paquete raíz** donde desea que se creen los 10 paquetes y diagramas.
-7. Vuelva a la ventana de Scripting, haga clic derecho sobre `GeneradorDiagramasComunicacion` y elija **Run Script**.
-8. Observe la consola inferior (**System Output** -> pestaña **Script**). En unos segundos aparecerá el mensaje de confirmación con los 30 diagramas generados.
+   - O presione: `Alt + 7` (o `Ctrl + F11`).
+3. En la ventana **Scripting**:
+   - Haga clic derecho en **Local Scripts** (o **JScript**) -> **New JScript**.
+   - Asigne un nombre al script (ej: `GenerarDiagramasSecuencia` o `GenerarArquitecturaSubsistemas`).
+4. Abra el script con doble clic, borre el contenido por defecto y **pegue el contenido del archivo `.js` correspondiente**.
+5. Guarde con `Ctrl + S`.
+6. En el **Project Browser** de EA (árbol lateral izquierdo), **haga clic sobre el paquete donde desea generar los diagramas**.
+7. En la ventana de Scripting, haga clic derecho sobre el script y seleccione **Run Script**.
+8. Revise los mensajes en la pestaña **System Output** -> **Script**.
 
 ---
 
@@ -78,3 +77,29 @@ Al ejecutarse en Enterprise Architect, el script crea automáticamente:
 | **P9** | **CU29**| Conciliar y Arquear Transacciones Financieras | Administrador, ConciliacionFinancieraView, PasarelaPagoController, AporteDinero, Bitacora |
 | **P9** | **CU30**| Gestionar Anulación o Reembolso de Transacción | Administrador, ModalReembolso, PasarelaPagoController, AporteDinero, Bitacora, PasarelaExterna |
 | **P10**| **CU25**| Generar Reportes e Indicadores Gerenciales| Administrador, ReportesGerencialesView, ReporteGerencialController, Mascota, Adopcion, Donacion, HistorialClinico |
+
+---
+
+### 4. Diagramas de Arquitectura de Subsistemas (Componentes)
+- **Archivo:** [`generar_arquitectura_subsistemas_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_arquitectura_subsistemas_ea.js)
+- **Tipo de Diagrama:** UML Component Diagram por cada Subsistema (P1 a P10).
+- **Estructura en 3 Capas:**
+  1. **Marco Delimitador (`Boundary`):** `Subsistema P[X] - [Nombre]`
+  2. **Capa Superior (`«FORM»`):** Vistas web (ej: `views/gestionusuarios.php`, `views/perfilusuario.php`)
+  3. **Conector Superior:** Ensamblado / Interfaz (`Assembly` - Ball & Socket)
+  4. **Capa Media (`«CLASS»`):** Controladores PHP del sistema (ej: `UsuarioController.php`, `RBACController.php`)
+  5. **Conector Inferior:** Dependencia punteada (`Dependency`) hacia la base de datos
+  6. **Capa Inferior (`«Table»`):** Tablas relacionales PostgreSQL de `Basededatosdelawebanimalitos` (ej: `usuario`, `persona`, `rol`, `permiso`, `bitacora`, `sesion`)
+
+---
+
+### 5. Diagrama de Clases Estructural de la Base de Datos
+- **Archivo:** [`generar_diagrama_clases_bd_ea.js`](file:///c:/xampp/htdocs/practica_s1_1-2026/proyecto/enterprise_architect_scripts/generar_diagrama_clases_bd_ea.js)
+- **Tipo de Diagrama:** UML Class Diagram (`Logical` / `Class`).
+- **Contenido Generado:**
+  - **25 Clases:** Todas las entidades del modelo relacional (`Usuario`, `RolPermiso`, `SesionJWT`, `Bitacora`, `Mascota`, `ExpedienteDigital`, `HistorialClinico`, `ArticuloInventario`, `InventarioLote`, `AlertaInventario`, `AjusteInventarioLote`, `Proveedor`, `Compra`, `DetalleCompra`, `SalidaInventario`, `DetalleSalidaLote`, `InteresadoAdopcion`, `EvaluacionIdoneidad`, `Adopcion`, `SeguimientoAdopcion`, `Donante`, `Donacion`, `AporteDinero`, `TipoAporte`, `DetalleDonacionInsumo`).
+  - **Atributos:** Columnas completas tipadas con visibilidad privada (`- id_usuario: Integer`, `- ci: String`, etc.).
+  - **Funcionalidades / Métodos:** Operaciones públicas de cada clase (`+ iniciarSesion()`, `+ formalizarAdopcion()`, `+ registrarIngreso()`, `+ procesarPagoQR()`, etc.).
+  - **Asociaciones y Cardinalidades:** 28 relaciones de asociación con multiplicidades UML (`1` a `0..*`, `1` a `1..*`, `1` a `1`, `1` a `0..1`).
+
+

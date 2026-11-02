@@ -141,6 +141,102 @@ export default function Mascotas() {
         }
     };
 
+    const imprimirExpedientePDF = () => {
+        if (!modalExpediente) return;
+        const printWin = window.open("", "_blank");
+        if (!printWin) return;
+
+        const filasHistorial = (historialMascota || []).map((h) => `
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 13px;">${h.fecha_atencion}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 13px; font-weight: bold; color: #183d35;">${h.tipo_procedimiento}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 13px;">${h.diagnostico}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 13px;">${h.observacion}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #4b5563;">${h.usuario?.nombre || "Veterinario de Turno"}</td>
+            </tr>
+        `).join("");
+
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Expediente Clínico - ${modalExpediente.nombre}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 30px; color: #1f2937; }
+                    .header { border-bottom: 2px solid #183d35; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+                    .title { color: #183d35; margin: 0; font-size: 24px; font-weight: 700; }
+                    .subtitle { color: #6b7280; font-size: 13px; margin: 5px 0 0 0; }
+                    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin-bottom: 25px; }
+                    .meta-item { font-size: 13px; }
+                    .meta-item strong { display: block; color: #475569; font-size: 11px; text-transform: uppercase; margin-bottom: 2px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 35px; }
+                    th { background-color: #183d35; color: white; text-align: left; padding: 10px; font-size: 12px; text-transform: uppercase; }
+                    .footer-sign { display: flex; justify-content: space-between; margin-top: 50px; padding-top: 20px; }
+                    .sign-box { width: 220px; border-top: 1px solid #64748b; text-align: center; font-size: 12px; color: #475569; padding-top: 8px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="padding: 10px 20px; background-color: #183d35; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Imprimir Documento / Guardar PDF</button>
+                    <button onclick="window.close()" style="padding: 10px 20px; background-color: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;">Cerrar</button>
+                </div>
+                <div class="header">
+                    <div>
+                        <h1 class="title">REFUGIO LOS ANGELITOS DE EDGAR</h1>
+                        <p class="subtitle">EXPEDIENTE CLÍNICO VETERINARIO OFICIAL • REGISTRO SANITARIO</p>
+                    </div>
+                    <div style="text-align: right; font-size: 12px; color: #64748b;">
+                        <strong>EXP-2026-${String(modalExpediente.id).padStart(5, "0")}</strong><br>
+                        Fecha emisión: ${new Date().toLocaleDateString("es-BO")}
+                    </div>
+                </div>
+
+                <div class="meta-grid">
+                    <div class="meta-item"><strong>Nombre del Paciente</strong>${modalExpediente.nombre}</div>
+                    <div class="meta-item"><strong>Especie / Raza</strong>${modalExpediente.especie} - ${modalExpediente.raza || "Mestizo"}</div>
+                    <div class="meta-item"><strong>Sexo / Color</strong>${modalExpediente.sexo} • ${modalExpediente.color || "No especificado"}</div>
+                    <div class="meta-item"><strong>Edad Estimada</strong>${modalExpediente.edad_aproximada || "Adulto joven"}</div>
+                    <div class="meta-item"><strong>Fecha de Ingreso</strong>${modalExpediente.fecha_ingreso || "2026-01-15"}</div>
+                    <div class="meta-item"><strong>Zona de Rescate</strong>${modalExpediente.zona_rescate || "Urbana"}</div>
+                    <div class="meta-item"><strong>Estado Actual</strong><span style="font-weight: bold; color: #16a34a;">${modalExpediente.estado_actual}</span></div>
+                    <div class="meta-item"><strong>Condición de Ingreso</strong>${modalExpediente.condicion_ingreso || "Rescatado"}</div>
+                    <div class="meta-item"><strong>Microchip / Ficha</strong>REF-${String(modalExpediente.id).padStart(4, "0")}</div>
+                </div>
+
+                <h3 style="color: #183d35; font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px;">Historial de Procedimientos y Atenciones Médicas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Fecha</th>
+                            <th style="width: 20%;">Procedimiento</th>
+                            <th style="width: 25%;">Diagnóstico Clínico</th>
+                            <th style="width: 25%;">Tratamiento / Insumos</th>
+                            <th style="width: 15%;">Veterinario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filasHistorial || '<tr><td colspan="5" style="text-align:center; padding:20px;">Sin registros médicos.</td></tr>'}
+                    </tbody>
+                </table>
+
+                <div class="footer-sign">
+                    <div class="sign-box">
+                        <strong>Médico Veterinario Responsable</strong><br>
+                        Colegio Médico Veterinario (COMVET)
+                    </div>
+                    <div class="sign-box">
+                        <strong>Dirección del Albergue</strong><br>
+                        Refugio Los Angelitos de Edgar
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
+    };
+
     return (
         <div className="dashboard-app">
             <Head title="Gestión de Rescate y Mascotas (P7) - Los Angelitos" />
@@ -152,16 +248,16 @@ export default function Mascotas() {
                     <section className="dashboard-intro">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                             <div>
-                                <p className="dashboard-eyebrow">P7: RESCATE Y FICHA CLÍNICA VETERINARIA</p>
+                                <p className="dashboard-eyebrow">RESCATE Y FICHA CLÍNICA VETERINARIA</p>
                                 <h2>Ficha de Rescate e Ingreso de Mascotas</h2>
-                                <p>CU19: Registro de animales acogidos, diagnóstico inicial de salud y consulta del expediente médico.</p>
+                                <p>Registro de animales acogidos, diagnóstico inicial de salud y consulta del expediente médico.</p>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setModalCrear(true)}
                                 className="btn-crear"
                             >
-                                <span style={{ fontSize: '16px' }}>+</span> Registrar Nuevo Rescate (CU19)
+                                <span style={{ fontSize: '16px' }}>+</span> Registrar Nuevo Rescate
                             </button>
                         </div>
                     </section>
@@ -207,7 +303,7 @@ export default function Mascotas() {
                             className="btn-action-view"
                             style={{ minHeight: '38px', padding: '0 16px' }}
                         >
-                            🔍 Buscar
+                            Buscar
                         </button>
                     </div>
 
@@ -268,7 +364,7 @@ export default function Mascotas() {
                 {modalCrear && (
                     <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
                         <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '24px', width: '500px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
-                            <h2 style={{ marginBottom: '16px' }}>Registrar Ficha de Rescate (CU19)</h2>
+                            <h2 style={{ marginBottom: '16px' }}>Registrar Ficha de Rescate</h2>
                             <form onSubmit={handleCrearMascota}>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                                     <div>
@@ -434,8 +530,16 @@ export default function Mascotas() {
                                 </div>
                             )}
 
-                            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                                 <button
+                                    type="button"
+                                    onClick={imprimirExpedientePDF}
+                                    style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#183d35', color: 'white', fontWeight: 600, cursor: 'pointer' }}
+                                >
+                                    Imprimir Expediente (PDF)
+                                </button>
+                                <button
+                                    type="button"
                                     onClick={() => setModalExpediente(null)}
                                     style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #d1d5db', background: '#f3f4f6', cursor: 'pointer' }}
                                 >

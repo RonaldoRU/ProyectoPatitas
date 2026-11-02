@@ -223,6 +223,6 @@ class HistorialClinicoController extends Controller
 
     private function authorizeVeterinarian(Request $request): void
     {
-        abort_unless($request->user()?->rol === 'Veterinario', 403);
+        abort_unless(in_array($request->user()?->rol, ['Veterinario', 'Administrador', 'Auxiliar Veterinario'], true), 403);
     }
 }

@@ -42,6 +42,31 @@ test('recovery request emails a temporary code without returning it in the respo
     );
 });
 
+test('recovery request emails a temporary code when requesting by CI', function () {
+    Notification::fake();
+    $user = new User([
+        'nombre' => 'Juan Pérez',
+        'email' => 'juan.perez@example.org',
+        'rol' => 'Voluntario',
+        'password' => 'old-password',
+        'ci' => '88997766',
+    ]);
+    $user->forceFill(['telefono' => '71122334'])->save();
+
+    $response = $this->postJson('/api/solicitar-codigo', [
+        'ci_email' => '88997766',
+    ]);
+
+    $response->assertAccepted()
+        ->assertJsonMissingPath('codigo');
+
+    Notification::assertSentTo(
+        $user,
+        PasswordResetCodeNotification::class,
+        fn (PasswordResetCodeNotification $notification): bool => preg_match('/^\d{6}$/', $notification->code) === 1,
+    );
+});
+
 test('recovery request uses the same response for an unknown email', function () {
     Notification::fake();
 

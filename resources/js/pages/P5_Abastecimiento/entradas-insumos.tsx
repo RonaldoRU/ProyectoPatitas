@@ -734,22 +734,7 @@ export default function EntradasInsumos() {
                                 </div>
 
                                 <div className="entry-lines__footer">
-                                    <button
-                                        className="entry-secondary-button"
-                                        type="button"
-                                        disabled={
-                                            lineas.length >=
-                                            catalogs.articulos.length
-                                        }
-                                        onClick={() =>
-                                            setLineas((current) => [
-                                                ...current,
-                                                emptyLine(),
-                                            ])
-                                        }
-                                    >
-                                        + Agregar artículo
-                                    </button>
+                                    
                                     {tipo === 'compra' && (
                                         <p className="entry-total">
                                             Total estimado{' '}

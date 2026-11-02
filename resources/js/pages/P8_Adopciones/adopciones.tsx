@@ -53,7 +53,7 @@ export default function Adopciones() {
     const [filtroVisitasEstado, setFiltroVisitasEstado] = useState<string>('todos');
     const [busquedaVisita, setBusquedaVisita] = useState<string>('');
 
-    // Modal Formalizar Adopción (CU22)
+    // Modal Formalizar Adopción
     const [modalFormalizar, setModalFormalizar] = useState(false);
     const [postulantesAprobados, setPostulantesAprobados] = useState<PostulanteAprobado[]>([]);
     const [mascotasDisponibles, setMascotasDisponibles] = useState<MascotaDisponible[]>([]);
@@ -66,10 +66,10 @@ export default function Adopciones() {
     // Modal Acta Digital
     const [actaDigital, setActaDigital] = useState<any | null>(null);
 
-    // Modal Consultar Visita (CU24)
+    // Modal Consultar Visita
     const [visitaAConsultar, setVisitaAConsultar] = useState<Seguimiento | null>(null);
 
-    // Modal Registrar / Completar Visita (CU24)
+    // Modal Registrar / Completar Visita
     const [seguimientoACompletar, setSeguimientoACompletar] = useState<Seguimiento | null>(null);
     const [formSeguimiento, setFormSeguimiento] = useState({
         fecha_realizada: new Date().toISOString().split('T')[0],
@@ -78,7 +78,7 @@ export default function Adopciones() {
         estado_seguimiento: 'Concluido Satisfactorio',
     });
 
-    // Modal Programar / Nueva Visita (CU24)
+    // Modal Programar / Nueva Visita
     const [modalNuevaVisita, setModalNuevaVisita] = useState(false);
     const [formNuevaVisita, setFormNuevaVisita] = useState({
         id_adopcion: '',
@@ -292,7 +292,91 @@ export default function Adopciones() {
     });
 
     const esVisitaPendiente = (s: Seguimiento) => {
-        return (
+        const imprimirActaOficialPDF = () => {
+        if (!actaDigital) return;
+        const printWin = window.open("", "_blank");
+        if (!printWin) return;
+
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Acta Oficial de Adopción - ${actaDigital.numero_acta}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 40px; color: #1f2937; line-height: 1.6; max-width: 750px; margin: 0 auto; }
+                    .header { text-align: center; border-bottom: 2px solid #16a34a; padding-bottom: 15px; margin-bottom: 25px; }
+                    .title { color: #16a34a; margin: 0; font-size: 22px; font-weight: bold; }
+                    .sub { color: #6b7280; font-size: 12px; margin-top: 4px; }
+                    .acta-no { font-size: 14px; font-weight: bold; color: #1f2937; margin-top: 6px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+                    .grid h4 { margin: 0 0 10px 0; color: #16a34a; font-size: 14px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; }
+                    .grid p { margin: 4px 0; font-size: 13px; }
+                    .clauses { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 30px; font-size: 12px; color: #14532d; }
+                    .clauses h4 { margin: 0 0 8px 0; font-size: 13px; }
+                    .clauses ol { margin: 0; padding-left: 18px; }
+                    .clauses li { margin-bottom: 6px; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; }
+                    .sign-box { width: 220px; border-top: 1px solid #64748b; text-align: center; font-size: 11px; color: #475569; padding-top: 6px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="padding: 10px 20px; background-color: #16a34a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Imprimir Acta Oficial / Guardar PDF</button>
+                    <button onclick="window.close()" style="padding: 10px 20px; background-color: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;">Cerrar</button>
+                </div>
+                <div class="header">
+                    <h1 class="title">ACTA INSTITUCIONAL DE ADOPCIÓN RESPONSABLE</h1>
+                    <div class="sub">ALBERGUE Y CENTRO DE RESCATE "LOS ANGELITOS DE EDGAR"</div>
+                    <div class="sub">NIT: 4892019018 • Personería Jurídica N° 342/2021 • Santa Cruz, Bolivia</div>
+                    <div class="acta-no">${actaDigital.numero_acta} • FECHA: ${actaDigital.fecha}</div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <h4>Datos del Adoptante Responsable</h4>
+                        <p><strong>Nombre Completo:</strong> ${actaDigital.adoptante?.nombre || "N/A"}</p>
+                        <p><strong>Cédula de Identidad:</strong> ${actaDigital.adoptante?.ci || "N/A"}</p>
+                        <p><strong>Teléfono de Contacto:</strong> ${actaDigital.adoptante?.telefono || "N/A"}</p>
+                        <p><strong>Dirección de Residencia:</strong> ${actaDigital.adoptante?.direccion || "N/A"}</p>
+                    </div>
+                    <div>
+                        <h4>Datos del Animal de Compañía</h4>
+                        <p><strong>Nombre del Paciente:</strong> ${actaDigital.mascota?.nombre || "N/A"}</p>
+                        <p><strong>Especie / Sexo:</strong> ${actaDigital.mascota?.especie || "Canino"} • ${actaDigital.mascota?.sexo || "N/A"}</p>
+                        <p><strong>Raza / Rasgos:</strong> ${actaDigital.mascota?.raza || "Mestizo"}</p>
+                        <p><strong>Estado Clínico:</strong> Esterilizado, vacunado y desparasitado</p>
+                    </div>
+                </div>
+
+                <div class="clauses">
+                    <h4>Términos y Compromisos Legales (Ley N° 700 de Defensa de los Animales)</h4>
+                    <ol>
+                        <li><strong>Guarda y Custodia Responsable:</strong> El adoptante asume de forma indivisible la provisión de alimentación adecuada, cobijo digno y bienestar biopsicosocial del animal.</li>
+                        <li><strong>Atención Veterinaria Obligatoria:</strong> Garantizar el cumplimiento anual del esquema de inmunización (antirrábica y múltiple) y desparasitaciones periódicas.</li>
+                        <li><strong>Prohibición Absoluta de Abandono o Traspaso:</strong> En caso de fuerza mayor que imposibilite la tenencia, el animal será retornado con exclusividad a este albergue. Queda prohibida su venta o cesión a terceros.</li>
+                        <li><strong>Programa de Seguimiento Post-Adopción:</strong> El adoptante autoriza y se compromete a recibir las visitas de seguimiento a los 30, 90 y 180 días de formalizada la adopción.</li>
+                    </ol>
+                </div>
+
+                <div class="signatures">
+                    <div class="sign-box">
+                        <strong>Firma y Huella del Adoptante</strong><br>
+                        C.I. ${actaDigital.adoptante?.ci || "........................"}
+                    </div>
+                    <div class="sign-box">
+                        <strong>Dirección del Albergue</strong><br>
+                        Los Angelitos de Edgar
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
+    };
+
+    return (
             s.estado_seguimiento === 'Pendiente' ||
             s.estado_seguimiento === 'Programado' ||
             !s.fecha_realizada ||
@@ -308,7 +392,91 @@ export default function Adopciones() {
             case 'Pendiente':
                 return <span className="badge-tag badge-tag--warning">Pendiente</span>;
             case 'Programado':
-                return (
+                const imprimirActaOficialPDF = () => {
+        if (!actaDigital) return;
+        const printWin = window.open("", "_blank");
+        if (!printWin) return;
+
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Acta Oficial de Adopción - ${actaDigital.numero_acta}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 40px; color: #1f2937; line-height: 1.6; max-width: 750px; margin: 0 auto; }
+                    .header { text-align: center; border-bottom: 2px solid #16a34a; padding-bottom: 15px; margin-bottom: 25px; }
+                    .title { color: #16a34a; margin: 0; font-size: 22px; font-weight: bold; }
+                    .sub { color: #6b7280; font-size: 12px; margin-top: 4px; }
+                    .acta-no { font-size: 14px; font-weight: bold; color: #1f2937; margin-top: 6px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+                    .grid h4 { margin: 0 0 10px 0; color: #16a34a; font-size: 14px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; }
+                    .grid p { margin: 4px 0; font-size: 13px; }
+                    .clauses { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 30px; font-size: 12px; color: #14532d; }
+                    .clauses h4 { margin: 0 0 8px 0; font-size: 13px; }
+                    .clauses ol { margin: 0; padding-left: 18px; }
+                    .clauses li { margin-bottom: 6px; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; }
+                    .sign-box { width: 220px; border-top: 1px solid #64748b; text-align: center; font-size: 11px; color: #475569; padding-top: 6px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="padding: 10px 20px; background-color: #16a34a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Imprimir Acta Oficial / Guardar PDF</button>
+                    <button onclick="window.close()" style="padding: 10px 20px; background-color: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;">Cerrar</button>
+                </div>
+                <div class="header">
+                    <h1 class="title">ACTA INSTITUCIONAL DE ADOPCIÓN RESPONSABLE</h1>
+                    <div class="sub">ALBERGUE Y CENTRO DE RESCATE "LOS ANGELITOS DE EDGAR"</div>
+                    <div class="sub">NIT: 4892019018 • Personería Jurídica N° 342/2021 • Santa Cruz, Bolivia</div>
+                    <div class="acta-no">${actaDigital.numero_acta} • FECHA: ${actaDigital.fecha}</div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <h4>Datos del Adoptante Responsable</h4>
+                        <p><strong>Nombre Completo:</strong> ${actaDigital.adoptante?.nombre || "N/A"}</p>
+                        <p><strong>Cédula de Identidad:</strong> ${actaDigital.adoptante?.ci || "N/A"}</p>
+                        <p><strong>Teléfono de Contacto:</strong> ${actaDigital.adoptante?.telefono || "N/A"}</p>
+                        <p><strong>Dirección de Residencia:</strong> ${actaDigital.adoptante?.direccion || "N/A"}</p>
+                    </div>
+                    <div>
+                        <h4>Datos del Animal de Compañía</h4>
+                        <p><strong>Nombre del Paciente:</strong> ${actaDigital.mascota?.nombre || "N/A"}</p>
+                        <p><strong>Especie / Sexo:</strong> ${actaDigital.mascota?.especie || "Canino"} • ${actaDigital.mascota?.sexo || "N/A"}</p>
+                        <p><strong>Raza / Rasgos:</strong> ${actaDigital.mascota?.raza || "Mestizo"}</p>
+                        <p><strong>Estado Clínico:</strong> Esterilizado, vacunado y desparasitado</p>
+                    </div>
+                </div>
+
+                <div class="clauses">
+                    <h4>Términos y Compromisos Legales (Ley N° 700 de Defensa de los Animales)</h4>
+                    <ol>
+                        <li><strong>Guarda y Custodia Responsable:</strong> El adoptante asume de forma indivisible la provisión de alimentación adecuada, cobijo digno y bienestar biopsicosocial del animal.</li>
+                        <li><strong>Atención Veterinaria Obligatoria:</strong> Garantizar el cumplimiento anual del esquema de inmunización (antirrábica y múltiple) y desparasitaciones periódicas.</li>
+                        <li><strong>Prohibición Absoluta de Abandono o Traspaso:</strong> En caso de fuerza mayor que imposibilite la tenencia, el animal será retornado con exclusividad a este albergue. Queda prohibida su venta o cesión a terceros.</li>
+                        <li><strong>Programa de Seguimiento Post-Adopción:</strong> El adoptante autoriza y se compromete a recibir las visitas de seguimiento a los 30, 90 y 180 días de formalizada la adopción.</li>
+                    </ol>
+                </div>
+
+                <div class="signatures">
+                    <div class="sign-box">
+                        <strong>Firma y Huella del Adoptante</strong><br>
+                        C.I. ${actaDigital.adoptante?.ci || "........................"}
+                    </div>
+                    <div class="sign-box">
+                        <strong>Dirección del Albergue</strong><br>
+                        Los Angelitos de Edgar
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
+    };
+
+    return (
                     <span className="badge-tag" style={{ backgroundColor: '#e0f2fe', color: '#0369a1', fontWeight: 600 }}>
                         Programado
                     </span>
@@ -318,6 +486,90 @@ export default function Adopciones() {
             default:
                 return <span className="badge-tag">{estado}</span>;
         }
+    };
+
+    const imprimirActaOficialPDF = () => {
+        if (!actaDigital) return;
+        const printWin = window.open("", "_blank");
+        if (!printWin) return;
+
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Acta Oficial de Adopción - ${actaDigital.numero_acta}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 40px; color: #1f2937; line-height: 1.6; max-width: 750px; margin: 0 auto; }
+                    .header { text-align: center; border-bottom: 2px solid #16a34a; padding-bottom: 15px; margin-bottom: 25px; }
+                    .title { color: #16a34a; margin: 0; font-size: 22px; font-weight: bold; }
+                    .sub { color: #6b7280; font-size: 12px; margin-top: 4px; }
+                    .acta-no { font-size: 14px; font-weight: bold; color: #1f2937; margin-top: 6px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+                    .grid h4 { margin: 0 0 10px 0; color: #16a34a; font-size: 14px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; }
+                    .grid p { margin: 4px 0; font-size: 13px; }
+                    .clauses { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 30px; font-size: 12px; color: #14532d; }
+                    .clauses h4 { margin: 0 0 8px 0; font-size: 13px; }
+                    .clauses ol { margin: 0; padding-left: 18px; }
+                    .clauses li { margin-bottom: 6px; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; }
+                    .sign-box { width: 220px; border-top: 1px solid #64748b; text-align: center; font-size: 11px; color: #475569; padding-top: 6px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="padding: 10px 20px; background-color: #16a34a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Imprimir Acta Oficial / Guardar PDF</button>
+                    <button onclick="window.close()" style="padding: 10px 20px; background-color: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;">Cerrar</button>
+                </div>
+                <div class="header">
+                    <h1 class="title">ACTA INSTITUCIONAL DE ADOPCIÓN RESPONSABLE</h1>
+                    <div class="sub">ALBERGUE Y CENTRO DE RESCATE "LOS ANGELITOS DE EDGAR"</div>
+                    <div class="sub">NIT: 4892019018 • Personería Jurídica N° 342/2021 • Santa Cruz, Bolivia</div>
+                    <div class="acta-no">${actaDigital.numero_acta} • FECHA: ${actaDigital.fecha}</div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <h4>Datos del Adoptante Responsable</h4>
+                        <p><strong>Nombre Completo:</strong> ${actaDigital.adoptante?.nombre || "N/A"}</p>
+                        <p><strong>Cédula de Identidad:</strong> ${actaDigital.adoptante?.ci || "N/A"}</p>
+                        <p><strong>Teléfono de Contacto:</strong> ${actaDigital.adoptante?.telefono || "N/A"}</p>
+                        <p><strong>Dirección de Residencia:</strong> ${actaDigital.adoptante?.direccion || "N/A"}</p>
+                    </div>
+                    <div>
+                        <h4>Datos del Animal de Compañía</h4>
+                        <p><strong>Nombre del Paciente:</strong> ${actaDigital.mascota?.nombre || "N/A"}</p>
+                        <p><strong>Especie / Sexo:</strong> ${actaDigital.mascota?.especie || "Canino"} • ${actaDigital.mascota?.sexo || "N/A"}</p>
+                        <p><strong>Raza / Rasgos:</strong> ${actaDigital.mascota?.raza || "Mestizo"}</p>
+                        <p><strong>Estado Clínico:</strong> Esterilizado, vacunado y desparasitado</p>
+                    </div>
+                </div>
+
+                <div class="clauses">
+                    <h4>Términos y Compromisos Legales (Ley N° 700 de Defensa de los Animales)</h4>
+                    <ol>
+                        <li><strong>Guarda y Custodia Responsable:</strong> El adoptante asume de forma indivisible la provisión de alimentación adecuada, cobijo digno y bienestar biopsicosocial del animal.</li>
+                        <li><strong>Atención Veterinaria Obligatoria:</strong> Garantizar el cumplimiento anual del esquema de inmunización (antirrábica y múltiple) y desparasitaciones periódicas.</li>
+                        <li><strong>Prohibición Absoluta de Abandono o Traspaso:</strong> En caso de fuerza mayor que imposibilite la tenencia, el animal será retornado con exclusividad a este albergue. Queda prohibida su venta o cesión a terceros.</li>
+                        <li><strong>Programa de Seguimiento Post-Adopción:</strong> El adoptante autoriza y se compromete a recibir las visitas de seguimiento a los 30, 90 y 180 días de formalizada la adopción.</li>
+                    </ol>
+                </div>
+
+                <div class="signatures">
+                    <div class="sign-box">
+                        <strong>Firma y Huella del Adoptante</strong><br>
+                        C.I. ${actaDigital.adoptante?.ci || "........................"}
+                    </div>
+                    <div class="sign-box">
+                        <strong>Dirección del Albergue</strong><br>
+                        Los Angelitos de Edgar
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
     };
 
     return (
@@ -331,16 +583,16 @@ export default function Adopciones() {
                     <section className="dashboard-intro">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                             <div>
-                                <p className="dashboard-eyebrow">P8: GESTIÓN INTEGRAL DE ADOPCIONES</p>
+                                <p className="dashboard-eyebrow">GESTIÓN INTEGRAL DE ADOPCIONES</p>
                                 <h2>
                                     {tab === 'adopciones'
-                                        ? 'Formalización de Adopciones (CU22)'
-                                        : 'Agenda de Visitas de Seguimiento Post-Adopción (CU24)'}
+                                        ? 'Formalización de Adopciones'
+                                        : 'Agenda de Visitas de Seguimiento Post-Adopción'}
                                 </h2>
                                 <p>
                                     {tab === 'adopciones'
-                                        ? 'CU22: Asignación legal de mascotas a postulantes aprobados y programación automática de visitas a 30, 90 y 180 días.'
-                                        : 'CU24: Consulta y registro de visitas de control domiciliario, auditoría de bienestar animal y evidencias fotográficas.'}
+                                        ? 'Asignación legal de mascotas a postulantes aprobados y programación automática de visitas a 30, 90 y 180 días.'
+                                        : 'Consulta y registro de visitas de control domiciliario, auditoría de bienestar animal y evidencias fotográficas.'}
                                 </p>
                             </div>
 
@@ -351,16 +603,16 @@ export default function Adopciones() {
                                     onClick={abrirModalFormalizar}
                                     className="btn-crear"
                                 >
-                                    <span style={{ fontSize: '16px' }}>+</span> Formalizar Adopción (CU22)
+                                    <span style={{ fontSize: '16px' }}>+</span> Formalizar Adopción
                                 </button>
                             ) : (
                                 <button
                                     type="button"
                                     onClick={() => setModalNuevaVisita(true)}
                                     className="btn-crear"
-                                    style={{ background: '#0284c7' }}
+                                    style={{ background: '#183d35' }}
                                 >
-                                    <span style={{ fontSize: '16px' }}>+</span> Programar / Registrar Visita (CU24)
+                                    <span style={{ fontSize: '16px' }}>+</span> Programar / Registrar Visita
                                 </button>
                             )}
                         </div>
@@ -441,7 +693,7 @@ export default function Adopciones() {
                                                             onClick={() => verActa(a.id)}
                                                             className="btn-action-view"
                                                         >
-                                                            📄 Emitir Acta Digital (PDF)
+                                                            Emitir Acta Digital (PDF)
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -509,7 +761,7 @@ export default function Adopciones() {
                                 <div style={{ minWidth: '260px' }}>
                                     <input
                                         type="text"
-                                        placeholder="🔍 Buscar por mascota o adoptante..."
+                                        placeholder="Buscar por mascota o adoptante..."
                                         value={busquedaVisita}
                                         onChange={(e) => setBusquedaVisita(e.target.value)}
                                         style={{
@@ -545,7 +797,91 @@ export default function Adopciones() {
                                             ) : (
                                                 seguimientosFiltrados.map((s) => {
                                                     const pendiente = esVisitaPendiente(s);
-                                                    return (
+                                                    const imprimirActaOficialPDF = () => {
+        if (!actaDigital) return;
+        const printWin = window.open("", "_blank");
+        if (!printWin) return;
+
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Acta Oficial de Adopción - ${actaDigital.numero_acta}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 40px; color: #1f2937; line-height: 1.6; max-width: 750px; margin: 0 auto; }
+                    .header { text-align: center; border-bottom: 2px solid #16a34a; padding-bottom: 15px; margin-bottom: 25px; }
+                    .title { color: #16a34a; margin: 0; font-size: 22px; font-weight: bold; }
+                    .sub { color: #6b7280; font-size: 12px; margin-top: 4px; }
+                    .acta-no { font-size: 14px; font-weight: bold; color: #1f2937; margin-top: 6px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+                    .grid h4 { margin: 0 0 10px 0; color: #16a34a; font-size: 14px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; }
+                    .grid p { margin: 4px 0; font-size: 13px; }
+                    .clauses { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 30px; font-size: 12px; color: #14532d; }
+                    .clauses h4 { margin: 0 0 8px 0; font-size: 13px; }
+                    .clauses ol { margin: 0; padding-left: 18px; }
+                    .clauses li { margin-bottom: 6px; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; }
+                    .sign-box { width: 220px; border-top: 1px solid #64748b; text-align: center; font-size: 11px; color: #475569; padding-top: 6px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="padding: 10px 20px; background-color: #16a34a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Imprimir Acta Oficial / Guardar PDF</button>
+                    <button onclick="window.close()" style="padding: 10px 20px; background-color: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;">Cerrar</button>
+                </div>
+                <div class="header">
+                    <h1 class="title">ACTA INSTITUCIONAL DE ADOPCIÓN RESPONSABLE</h1>
+                    <div class="sub">ALBERGUE Y CENTRO DE RESCATE "LOS ANGELITOS DE EDGAR"</div>
+                    <div class="sub">NIT: 4892019018 • Personería Jurídica N° 342/2021 • Santa Cruz, Bolivia</div>
+                    <div class="acta-no">${actaDigital.numero_acta} • FECHA: ${actaDigital.fecha}</div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <h4>Datos del Adoptante Responsable</h4>
+                        <p><strong>Nombre Completo:</strong> ${actaDigital.adoptante?.nombre || "N/A"}</p>
+                        <p><strong>Cédula de Identidad:</strong> ${actaDigital.adoptante?.ci || "N/A"}</p>
+                        <p><strong>Teléfono de Contacto:</strong> ${actaDigital.adoptante?.telefono || "N/A"}</p>
+                        <p><strong>Dirección de Residencia:</strong> ${actaDigital.adoptante?.direccion || "N/A"}</p>
+                    </div>
+                    <div>
+                        <h4>Datos del Animal de Compañía</h4>
+                        <p><strong>Nombre del Paciente:</strong> ${actaDigital.mascota?.nombre || "N/A"}</p>
+                        <p><strong>Especie / Sexo:</strong> ${actaDigital.mascota?.especie || "Canino"} • ${actaDigital.mascota?.sexo || "N/A"}</p>
+                        <p><strong>Raza / Rasgos:</strong> ${actaDigital.mascota?.raza || "Mestizo"}</p>
+                        <p><strong>Estado Clínico:</strong> Esterilizado, vacunado y desparasitado</p>
+                    </div>
+                </div>
+
+                <div class="clauses">
+                    <h4>Términos y Compromisos Legales (Ley N° 700 de Defensa de los Animales)</h4>
+                    <ol>
+                        <li><strong>Guarda y Custodia Responsable:</strong> El adoptante asume de forma indivisible la provisión de alimentación adecuada, cobijo digno y bienestar biopsicosocial del animal.</li>
+                        <li><strong>Atención Veterinaria Obligatoria:</strong> Garantizar el cumplimiento anual del esquema de inmunización (antirrábica y múltiple) y desparasitaciones periódicas.</li>
+                        <li><strong>Prohibición Absoluta de Abandono o Traspaso:</strong> En caso de fuerza mayor que imposibilite la tenencia, el animal será retornado con exclusividad a este albergue. Queda prohibida su venta o cesión a terceros.</li>
+                        <li><strong>Programa de Seguimiento Post-Adopción:</strong> El adoptante autoriza y se compromete a recibir las visitas de seguimiento a los 30, 90 y 180 días de formalizada la adopción.</li>
+                    </ol>
+                </div>
+
+                <div class="signatures">
+                    <div class="sign-box">
+                        <strong>Firma y Huella del Adoptante</strong><br>
+                        C.I. ${actaDigital.adoptante?.ci || "........................"}
+                    </div>
+                    <div class="sign-box">
+                        <strong>Dirección del Albergue</strong><br>
+                        Los Angelitos de Edgar
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
+    };
+
+    return (
                                                         <tr key={s.id}>
                                                             <td><strong>#{s.id}</strong></td>
                                                             <td>
@@ -579,7 +915,7 @@ export default function Adopciones() {
                                                                         title="Consultar detalles completos de la visita"
                                                                         style={{ padding: '4px 10px', fontSize: '12px' }}
                                                                     >
-                                                                        🔍 Consultar
+                                                                        Consultar
                                                                     </button>
 
                                                                     {/* Botón 2: Registrar / Completar Visita */}
@@ -591,7 +927,7 @@ export default function Adopciones() {
                                                                             style={{
                                                                                 padding: '4px 10px',
                                                                                 fontSize: '12px',
-                                                                                backgroundColor: '#16a34a',
+                                                                                backgroundColor: '#183d35',
                                                                                 color: '#ffffff',
                                                                                 borderRadius: '5px',
                                                                                 border: 'none',
@@ -599,12 +935,12 @@ export default function Adopciones() {
                                                                                 fontWeight: 600,
                                                                             }}
                                                                         >
-                                                                            📝 Registrar Visita
+                                                                            Registrar Visita
                                                                         </button>
                                                                     ) : (
                                                                         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                                                             <span className="badge-tag badge-tag--success" style={{ fontSize: '11px', padding: '2px 6px' }}>
-                                                                                ✓ Auditado OK
+                                                                                Auditado OK
                                                                             </span>
                                                                             <button
                                                                                 type="button"
@@ -613,7 +949,7 @@ export default function Adopciones() {
                                                                                 title="Editar o complementar observaciones"
                                                                                 style={{ padding: '2px 6px', fontSize: '11px' }}
                                                                             >
-                                                                                ✏️ Editar
+                                                                                Editar
                                                                             </button>
                                                                         </div>
                                                                     )}
@@ -630,11 +966,11 @@ export default function Adopciones() {
                         </div>
                     )}
 
-                    {/* MODAL 1: Formalizar Adopción (CU22) */}
+                    {/* MODAL 1: Formalizar Adopción */}
                     {modalFormalizar && (
                         <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
                             <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '24px', width: '500px', maxWidth: '95vw' }}>
-                                <h2 style={{ marginBottom: '12px' }}>Formalizar Adopción (CU22)</h2>
+                                <h2 style={{ marginBottom: '12px' }}>Formalizar Adopción</h2>
                                 <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
                                     Al formalizar, el estado de la mascota cambiará a <strong>Adoptado</strong> y el sistema programará automáticamente las visitas de control a los <strong>30, 90 y 180 días</strong>.
                                 </p>
@@ -705,17 +1041,17 @@ export default function Adopciones() {
                         </div>
                     )}
 
-                    {/* MODAL 2: Consultar Visita de Seguimiento (CU24) */}
+                    {/* MODAL 2: Consultar Visita de Seguimiento */}
                     {visitaAConsultar && (
                         <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                            <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '26px', width: '600px', maxWidth: '95vw', borderTop: '4px solid #0284c7' }}>
+                            <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '26px', width: '600px', maxWidth: '95vw', borderTop: '4px solid #183d35' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: '12px', marginBottom: '16px' }}>
                                     <div>
                                         <h2 style={{ fontSize: '19px', margin: 0, color: '#0f172a' }}>
                                             Ficha de Visita de Seguimiento #{visitaAConsultar.id}
                                         </h2>
                                         <span style={{ fontSize: '12px', color: '#64748b' }}>
-                                            Control y Auditoría de Bienestar Animal (CU24)
+                                            Control y Auditoría de Bienestar Animal
                                         </span>
                                     </div>
                                     <div>
@@ -725,14 +1061,14 @@ export default function Adopciones() {
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
                                     <div style={{ backgroundColor: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                                        <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', color: '#0369a1' }}>🐶 Mascota en Seguimiento</h4>
+                                        <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', color: '#183d35' }}>Mascota en Seguimiento</h4>
                                         <p style={{ margin: '2px 0', fontSize: '13px' }}><strong>Nombre:</strong> {visitaAConsultar.adopcion?.mascota?.nombre || 'N/D'}</p>
                                         <p style={{ margin: '2px 0', fontSize: '13px' }}><strong>Especie:</strong> {visitaAConsultar.adopcion?.mascota?.especie || 'N/D'}</p>
                                         <p style={{ margin: '2px 0', fontSize: '13px' }}><strong>Raza:</strong> {visitaAConsultar.adopcion?.mascota?.raza || 'Mestizo'}</p>
                                     </div>
 
                                     <div style={{ backgroundColor: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                                        <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', color: '#0369a1' }}>👤 Datos del Adoptante</h4>
+                                        <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', color: '#183d35' }}>Datos del Adoptante</h4>
                                         <p style={{ margin: '2px 0', fontSize: '13px' }}><strong>Nombre:</strong> {visitaAConsultar.adopcion?.interesado?.nombre || 'N/D'}</p>
                                         <p style={{ margin: '2px 0', fontSize: '13px' }}><strong>Teléfono:</strong> {visitaAConsultar.adopcion?.interesado?.telefono || 'N/D'}</p>
                                         <p style={{ margin: '2px 0', fontSize: '13px' }}><strong>Dirección:</strong> {visitaAConsultar.adopcion?.interesado?.direccion || 'N/D'}</p>
@@ -794,13 +1130,13 @@ export default function Adopciones() {
                                             padding: '8px 16px',
                                             borderRadius: '6px',
                                             border: 'none',
-                                            backgroundColor: '#16a34a',
+                                            backgroundColor: '#183d35',
                                             color: 'white',
                                             fontWeight: 600,
                                             cursor: 'pointer',
                                         }}
                                     >
-                                        📝 Registrar / Editar Visita
+                                        Registrar / Editar Visita
                                     </button>
                                     <button
                                         type="button"
@@ -821,13 +1157,13 @@ export default function Adopciones() {
                         </div>
                     )}
 
-                    {/* MODAL 3: Registrar / Completar Visita (CU24) */}
+                    {/* MODAL 3: Registrar / Completar Visita */}
                     {seguimientoACompletar && (
                         <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
                             <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '24px', width: '520px', maxWidth: '95vw' }}>
-                                <h2 style={{ marginBottom: '8px' }}>Registrar Visita Post-Adopción (CU24)</h2>
+                                <h2 style={{ marginBottom: '8px' }}>Registrar Visita Post-Adopción</h2>
                                 <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
-                                    Mascota: <strong style={{ color: '#15803d' }}>{seguimientoACompletar.adopcion?.mascota?.nombre}</strong> | Adoptante: <strong>{seguimientoACompletar.adopcion?.interesado?.nombre}</strong>
+                                    Mascota: <strong style={{ color: '#183d35' }}>{seguimientoACompletar.adopcion?.mascota?.nombre}</strong> | Adoptante: <strong>{seguimientoACompletar.adopcion?.interesado?.nombre}</strong>
                                 </p>
                                 <form onSubmit={handleCompletarSeguimiento}>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
@@ -895,7 +1231,7 @@ export default function Adopciones() {
                                         <button
                                             type="submit"
                                             disabled={guardando}
-                                            style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#0284c7', color: 'white', fontWeight: 600, cursor: 'pointer' }}
+                                            style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#183d35', color: 'white', fontWeight: 600, cursor: 'pointer' }}
                                         >
                                             {guardando ? 'Guardando...' : 'Guardar Visita de Control'}
                                         </button>
@@ -905,11 +1241,11 @@ export default function Adopciones() {
                         </div>
                     )}
 
-                    {/* MODAL 4: Programar / Registrar Nueva Visita de Seguimiento (CU24) */}
+                    {/* MODAL 4: Programar / Registrar Nueva Visita de Seguimiento */}
                     {modalNuevaVisita && (
                         <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
                             <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '24px', width: '520px', maxWidth: '95vw' }}>
-                                <h2 style={{ marginBottom: '8px' }}>Programar / Registrar Visita de Control (CU24)</h2>
+                                <h2 style={{ marginBottom: '8px' }}>Programar / Registrar Visita de Control</h2>
                                 <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
                                     Selecciona una adopción formalizada para agendar una nueva auditoría o registrar una visita extraordinaria de bienestar.
                                 </p>
@@ -994,7 +1330,7 @@ export default function Adopciones() {
                                         <button
                                             type="submit"
                                             disabled={guardando}
-                                            style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#0284c7', color: 'white', fontWeight: 600, cursor: 'pointer' }}
+                                            style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#183d35', color: 'white', fontWeight: 600, cursor: 'pointer' }}
                                         >
                                             {guardando ? 'Programando...' : 'Guardar Visita'}
                                         </button>
@@ -1004,7 +1340,7 @@ export default function Adopciones() {
                         </div>
                     )}
 
-                    {/* MODAL 5: Acta Digital (CU22) */}
+                    {/* MODAL 5: Acta Digital */}
                     {actaDigital && (
                         <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
                             <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '28px', width: '600px', maxWidth: '95vw', border: '2px solid #16a34a' }}>
@@ -1041,10 +1377,10 @@ export default function Adopciones() {
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                                     <button
                                         type="button"
-                                        onClick={() => window.print()}
-                                        style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #16a34a', color: '#16a34a', background: 'transparent', cursor: 'pointer' }}
+                                        onClick={imprimirActaOficialPDF}
+                                        style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#16a34a', color: 'white', fontWeight: 600, cursor: 'pointer' }}
                                     >
-                                        Imprimir / Guardar PDF
+                                        Imprimir Acta Oficial (PDF)
                                     </button>
                                     <button
                                         type="button"

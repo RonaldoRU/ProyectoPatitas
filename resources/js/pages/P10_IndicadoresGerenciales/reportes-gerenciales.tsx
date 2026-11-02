@@ -63,6 +63,48 @@ export default function ReportesGerencialesPage() {
             });
     }, []);
 
+    const exportarCSV = () => {
+        if (!data) return;
+
+        let csv = "\uFEFF";
+        csv += "INFORME GERENCIAL CONSOLIDADO - ALBERGUE LOS ANGELITOS DE EDGAR\r\n";
+        csv += `Fecha de generación:;${new Date().toLocaleString("es-BO")}\r\n\r\n`;
+
+        csv += "--- INDICADORES GENERALES ---\r\n";
+        csv += `Tasa Global de Adopción;${data.indicadores_clave.tasa_adopcion_porcentaje}%\r\n`;
+        csv += `Total Animales Rescatados;${data.indicadores_clave.total_rescates_historico}\r\n`;
+        csv += `Total Animales Adoptados;${data.indicadores_clave.total_adopciones_historico}\r\n`;
+        csv += `Total Fondos Recaudados (BOB);${Number(data.indicadores_clave.total_donaciones_monto).toFixed(2)}\r\n\r\n`;
+
+        csv += "--- EVOLUCIÓN HISTÓRICA MENSUAL ---\r\n";
+        csv += "Mes;Rescates;Adopciones;Recaudación Donaciones (BOB)\r\n";
+        data.evolucion_mensual.forEach((m) => {
+            csv += `${m.mes};${m.rescates};${m.adopciones};${Number(m.ingresos_donaciones).toFixed(2)}\r\n`;
+        });
+        csv += "\r\n";
+
+        csv += "--- TOP MEDICAMENTOS E INSUMOS CONSUMIDOS ---\r\n";
+        csv += "Insumo / Medicamento;Categoría;Unidad de Medida;Total Consumido\r\n";
+        data.top_insumos_consumidos.forEach((ins) => {
+            csv += `"${ins.nombre}";${ins.categoria};${ins.unidad_medida};${ins.total_consumido}\r\n`;
+        });
+        csv += "\r\n";
+
+        csv += "--- POBLACIÓN DE ANIMALES POR ESTADO ---\r\n";
+        csv += "Estado en Albergue;Total Animales\r\n";
+        data.poblacion_por_estado.forEach((p) => {
+            csv += `${p.estado_actual};${p.total}\r\n`;
+        });
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `reporte-gerencial-dinamico-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     const exportarReporte = () => {
         if (!data) return;
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -87,24 +129,41 @@ export default function ReportesGerencialesPage() {
                                 <div>
                                     <p className="dashboard-eyebrow">MÉTRICAS OPERATIVAS Y DE IMPACTO</p>
                                     <h2>Indicadores Gerenciales y Estadísticas</h2>
-                                    <p>CU25: Evolución semestral de adopciones vs rescates, rotación de insumos médicos y balance financiero.</p>
+                                    <p>Evolución semestral de adopciones vs rescates, rotación de insumos médicos y balance financiero.</p>
                                 </div>
-                                <div style={{ display: 'flex', gap: '10px' }}>
+                                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                                     <button
                                         type="button"
                                         onClick={() => window.print()}
                                         style={{
                                             padding: '8px 16px',
                                             borderRadius: '6px',
-                                            border: '1px solid var(--dashboard-line)',
+                                            border: '1px solid #183d35',
                                             backgroundColor: 'white',
-                                            color: 'var(--dashboard-ink)',
+                                            color: '#183d35',
                                             fontWeight: 600,
                                             cursor: 'pointer',
                                             fontSize: '13px',
                                         }}
                                     >
-                                        🖨️ Imprimir
+                                        Reporte Estático (Imprimir / PDF)
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={exportarCSV}
+                                        disabled={!data}
+                                        style={{
+                                            padding: '8px 16px',
+                                            borderRadius: '6px',
+                                            border: '1px solid var(--dashboard-forest)',
+                                            backgroundColor: '#f0fdf4',
+                                            color: '#183d35',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        Exportar CSV Dinámico
                                     </button>
                                     <button
                                         type="button"
@@ -121,7 +180,7 @@ export default function ReportesGerencialesPage() {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        📥 Exportar JSON
+                                        Exportar JSON Dinámico
                                     </button>
                                 </div>
                             </div>
@@ -198,10 +257,10 @@ export default function ReportesGerencialesPage() {
                                                     {item.mes}
                                                 </span>
                                                 <span role="cell" style={{ color: 'var(--dashboard-coral)', fontWeight: 600 }}>
-                                                    🐾 {item.rescates} rescatados
+                                                    {item.rescates} rescatados
                                                 </span>
                                                 <span role="cell" style={{ color: 'var(--dashboard-forest)', fontWeight: 600 }}>
-                                                    ❤️ {item.adopciones} adoptados
+                                                    {item.adopciones} adoptados
                                                 </span>
                                                 <span role="cell" style={{ fontWeight: 700 }}>
                                                     Bs. {Number(item.ingresos_donaciones).toFixed(2)}

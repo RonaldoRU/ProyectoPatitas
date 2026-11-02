@@ -196,17 +196,25 @@ test('clinical attention rejects fractional and nonpositive quantities and repea
         ->and(SalidaInventario::query()->count())->toBe(0);
 });
 
-test('only veterinarians can read clinical catalogs or register an attention', function () {
+test('unauthorized roles cannot read clinical catalogs or register an attention', function () {
     $this->getJson('/api/atenciones-clinicas/catalogos')->assertUnauthorized();
 
-    $administrator = createAtencionClinicaUser('admin-clinico-forbidden@example.org', 'Administrador');
+    $voluntario = createAtencionClinicaUser('voluntario-clinico-forbidden@example.org', 'Voluntario');
 
-    $this->withToken($administrator->createToken('clinical-admin-forbidden')->plainTextToken)
+    $this->withToken($voluntario->createToken('clinical-voluntario-forbidden')->plainTextToken)
         ->getJson('/api/atenciones-clinicas/catalogos')
         ->assertForbidden();
 
     expect(HistorialClinico::query()->count())->toBe(0)
         ->and(SalidaInventario::query()->count())->toBe(0);
+});
+
+test('administrators and veterinarians can access clinical catalogs', function () {
+    $administrator = createAtencionClinicaUser('admin-clinico-allowed@example.org', 'Administrador');
+
+    $this->withToken($administrator->createToken('clinical-admin-allowed')->plainTextToken)
+        ->getJson('/api/atenciones-clinicas/catalogos')
+        ->assertOk();
 });
 
 test('the clinical attention registration page renders through Inertia', function () {

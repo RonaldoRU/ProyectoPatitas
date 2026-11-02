@@ -9,8 +9,6 @@ type PaqueteInfo = {
     funciones: Array<{
         nombre: string;
         ruta: string;
-        casoUso: string;
-        icono: string;
         descripcion: string;
     }>;
 };
@@ -22,8 +20,8 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#fee2e2',
         badgeColor: '#991b1b',
         funciones: [
-            { nombre: 'Iniciar Sesión', ruta: '/login', casoUso: 'CU1', icono: '🔐', descripcion: 'Autenticación segura y bitácora de accesos.' },
-            { nombre: 'Recuperar Contraseña', ruta: '/recuperar-password', casoUso: 'CU3', icono: '🔑', descripcion: 'Restablecimiento con token temporal.' },
+            { nombre: 'Iniciar Sesión', ruta: '/login', descripcion: 'Autenticación segura y bitácora de accesos.' },
+            { nombre: 'Recuperar Contraseña', ruta: '/recuperar-password', descripcion: 'Restablecimiento con token temporal.' },
         ],
     },
     {
@@ -32,7 +30,7 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#dbeafe',
         badgeColor: '#1e40af',
         funciones: [
-            { nombre: 'Gestión de Usuarios y Roles', ruta: '/usuarios', casoUso: 'CU4-CU8', icono: '👥', descripcion: 'Altas, bajas lógicas y asignación de roles.' },
+            { nombre: 'Gestión de Usuarios y Roles', ruta: '/usuarios', descripcion: 'Altas, bajas lógicas y asignación de roles.' },
         ],
     },
     {
@@ -41,7 +39,7 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#f1f5f9',
         badgeColor: '#334155',
         funciones: [
-            { nombre: 'Bitácora de Eventos', ruta: '/bitacora', casoUso: 'CU9, CU10', icono: '📜', descripcion: 'Registro inmutable de trazabilidad e IP.' },
+            { nombre: 'Bitácora de Eventos', ruta: '/bitacora', descripcion: 'Registro inmutable de trazabilidad e IP.' },
         ],
     },
     {
@@ -50,7 +48,7 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#e0f2fe',
         badgeColor: '#075985',
         funciones: [
-            { nombre: 'Catálogo y Control de Stock', ruta: '/articulos-inventario', casoUso: 'CU11, CU14, CU17', icono: '📦', descripcion: 'Artículos, stock mínimo y ajustes manuales.' },
+            { nombre: 'Catálogo y Control de Stock', ruta: '/articulos-inventario', descripcion: 'Artículos, stock mínimo y ajustes manuales.' },
         ],
     },
     {
@@ -59,9 +57,9 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#fef3c7',
         badgeColor: '#92400e',
         funciones: [
-            { nombre: 'Proveedores Registrados', ruta: '/proveedores', casoUso: 'CU18', icono: '🏢', descripcion: 'Directorio de proveedores e historial.' },
-            { nombre: 'Entradas de Insumos', ruta: '/entradas-insumos', casoUso: 'CU12', icono: '📥', descripcion: 'Recepción con control de lotes y vencimiento.' },
-            { nombre: 'Salidas y Consumos', ruta: '/salidas-inventario', casoUso: 'CU13', icono: '📤', descripcion: 'Descargo de productos y costeo de salida.' },
+            { nombre: 'Proveedores Registrados', ruta: '/proveedores', descripcion: 'Directorio de proveedores e historial.' },
+            { nombre: 'Entradas de Insumos', ruta: '/entradas-insumos', descripcion: 'Recepción con control de lotes y vencimiento.' },
+            { nombre: 'Salidas y Consumos', ruta: '/salidas-inventario', descripcion: 'Descargo de productos y costeo de salida.' },
         ],
     },
     {
@@ -70,7 +68,7 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#ffe4e6',
         badgeColor: '#9f1239',
         funciones: [
-            { nombre: 'Control de Vencimientos', ruta: '/control-vencimientos', casoUso: 'CU16', icono: '⏰', descripcion: 'Semáforo de caducidad a 30 y 60 días.' },
+            { nombre: 'Control de Vencimientos', ruta: '/control-vencimientos', descripcion: 'Semáforo de caducidad a 30 y 60 días.' },
         ],
     },
     {
@@ -79,8 +77,8 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#e0f2fe',
         badgeColor: '#0369a1',
         funciones: [
-            { nombre: 'Fichas de Mascotas Rescatadas', ruta: '/mascotas', casoUso: 'CU19', icono: '🐾', descripcion: 'Ingreso, zona de rescate y ficha médica.' },
-            { nombre: 'Atención Médica Veterinaria', ruta: '/atenciones-clinicas', casoUso: 'CU20, CU15', icono: '🩺', descripcion: 'Consultas médicas y descargo automático.' },
+            { nombre: 'Fichas de Mascotas Rescatadas', ruta: '/mascotas', descripcion: 'Ingreso, zona de rescate y ficha médica.' },
+            { nombre: 'Atención Médica Veterinaria', ruta: '/atenciones-clinicas', descripcion: 'Consultas médicas y descargo automático.' },
         ],
     },
     {
@@ -89,8 +87,8 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#dcfce7',
         badgeColor: '#166534',
         funciones: [
-            { nombre: 'Postulantes y Evaluación', ruta: '/postulantes', casoUso: 'CU21', icono: '📋', descripcion: 'Evaluación y scoring de aptitud (0-100 pts).' },
-            { nombre: 'Formalización y Visitas', ruta: '/adopciones', casoUso: 'CU22, CU24', icono: '🏠', descripcion: 'Acta de adopción y visitas a 30, 90 y 180 días.' },
+            { nombre: 'Postulantes y Evaluación', ruta: '/postulantes', descripcion: 'Evaluación y scoring de aptitud (0-100 pts).' },
+            { nombre: 'Formalización y Visitas', ruta: '/adopciones', descripcion: 'Acta de adopción y visitas a 30, 90 y 180 días.' },
         ],
     },
     {
@@ -99,8 +97,8 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#f3e8ff',
         badgeColor: '#6b21a8',
         funciones: [
-            { nombre: 'Donaciones Físicas y Efectivo', ruta: '/donaciones', casoUso: 'CU23', icono: '🎁', descripcion: 'Recepción de aportes con recibo oficial.' },
-            { nombre: 'Pasarela QR y Conciliación', ruta: '/pasarela-pagos', casoUso: 'CU26-CU30', icono: '💳', descripcion: 'QR dinámico, Webhook bancario y arqueo.' },
+            { nombre: 'Donaciones Físicas y Efectivo', ruta: '/donaciones', descripcion: 'Recepción de aportes con recibo oficial.' },
+            { nombre: 'Pasarela QR y Conciliación', ruta: '/pasarela-pagos', descripcion: 'QR dinámico, Webhook bancario y arqueo.' },
         ],
     },
     {
@@ -109,8 +107,8 @@ const PAQUETES: PaqueteInfo[] = [
         badgeBg: '#e0e7ff',
         badgeColor: '#3730a3',
         funciones: [
-            { nombre: 'Dashboard General', ruta: '/dashboard', casoUso: 'Tablero', icono: '📈', descripcion: 'Resumen operativo, alertas y métricas clave.' },
-            { nombre: 'Reportes e Indicadores', ruta: '/reportes-gerenciales', casoUso: 'CU25', icono: '📊', descripcion: 'Evolución semestral, rotación y balance.' },
+            { nombre: 'Dashboard General', ruta: '/dashboard', descripcion: 'Resumen operativo, alertas y métricas clave.' },
+            { nombre: 'Reportes e Indicadores', ruta: '/reportes-gerenciales', descripcion: 'Evolución semestral, rotación y balance.' },
         ],
     },
 ];
@@ -169,7 +167,6 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                 (f) =>
                     coincidePaquete ||
                     f.nombre.toLowerCase().includes(query) ||
-                    f.casoUso.toLowerCase().includes(query) ||
                     f.descripcion.toLowerCase().includes(query)
             );
 
@@ -295,8 +292,11 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                                 fontFamily: "'Instrument Sans', sans-serif",
                             }}
                         />
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '13px', opacity: 0.7 }}>
-                            🔍
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', opacity: 0.7 }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
                         </span>
                         {filtro && (
                             <button
@@ -322,7 +322,7 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                     {/* Subtítulo limpio e informativo */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.65)' }}>
                         <span>Catálogo de 10 paquetes</span>
-                        <span style={{ color: '#e1e89f', fontSize: '10.5px' }}>Toca cada paquete para ver sus CUs</span>
+                        <span style={{ color: '#e1e89f', fontSize: '10.5px' }}>Toca cada paquete para ver sus módulos</span>
                     </div>
                 </div>
 
@@ -429,7 +429,7 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                                                     {paquete.nombre}
                                                 </div>
                                                 <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.62)', marginTop: '2px', lineHeight: 1.2 }}>
-                                                    {paquete.funciones.length} {paquete.funciones.length === 1 ? 'caso de uso' : 'casos de uso'}
+                                                    {paquete.funciones.length} {paquete.funciones.length === 1 ? 'módulo' : 'módulos'}
                                                 </div>
                                             </div>
                                         </div>
@@ -442,7 +442,7 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                                                     fontWeight: 600,
                                                 }}
                                             >
-                                                {estaAbierto ? 'Ocultar' : 'Ver CUs'}
+                                                {estaAbierto ? 'Ocultar' : 'Ver opciones'}
                                             </span>
                                             <svg
                                                 viewBox="0 0 20 20"
@@ -505,34 +505,26 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                                                             if (!activa) e.currentTarget.style.backgroundColor = 'transparent';
                                                         }}
                                                     >
-                                                        <span style={{ fontSize: '16px', lineHeight: 1.2, marginTop: '2px', flexShrink: 0 }}>
-                                                            {f.icono}
-                                                        </span>
+                                                        <span
+                                                            style={{
+                                                                width: '6px',
+                                                                height: '6px',
+                                                                borderRadius: '50%',
+                                                                backgroundColor: activa ? '#e1e89f' : 'rgba(255, 255, 255, 0.4)',
+                                                                marginTop: '6px',
+                                                                flexShrink: 0,
+                                                            }}
+                                                        />
                                                         <div style={{ flex: 1, minWidth: 0 }}>
-                                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                                                            <div>
                                                                 <span
                                                                     style={{
-                                                                        fontSize: '12.5px',
+                                                                        fontSize: '13px',
                                                                         fontWeight: activa ? 700 : 600,
                                                                         color: '#ffffff',
                                                                     }}
                                                                 >
                                                                     {f.nombre}
-                                                                </span>
-                                                                <span
-                                                                    style={{
-                                                                        fontSize: '10px',
-                                                                        fontWeight: 700,
-                                                                        backgroundColor: 'rgba(225, 232, 159, 0.2)',
-                                                                        color: '#e1e89f',
-                                                                        padding: '2px 6px',
-                                                                        borderRadius: '4px',
-                                                                        border: '1px solid rgba(225, 232, 159, 0.35)',
-                                                                        whiteSpace: 'nowrap',
-                                                                        flexShrink: 0,
-                                                                    }}
-                                                                >
-                                                                    {f.casoUso}
                                                                 </span>
                                                             </div>
                                                             <p
@@ -572,7 +564,6 @@ export default function MenuHamburguesa({ abierto, onClose }: MenuHamburguesaPro
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span>🐾</span>
                         <span>Refugio Los Angelitos de Edgar</span>
                     </div>
                     <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Santa Cruz, Bolivia</span>

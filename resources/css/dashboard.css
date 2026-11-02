@@ -347,8 +347,11 @@
 
 .dashboard-stat__number {
     color: var(--dashboard-forest);
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
     font-size: 36px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
     line-height: 1;
 }
 
@@ -922,9 +925,11 @@
 }
 
 .stat-value {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
     font-size: 32px;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
     color: var(--dashboard-forest);
     line-height: 1.1;
     margin: 4px 0;

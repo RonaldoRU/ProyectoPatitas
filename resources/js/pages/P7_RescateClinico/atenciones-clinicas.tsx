@@ -50,6 +50,7 @@ export default function AtencionesClinicas() {
     const [submitting, setSubmitting] = useState(false);
     const [fecha, setFecha] = useState(localDate);
     const [mascotaId, setMascotaId] = useState('');
+    const [busquedaMascota, setBusquedaMascota] = useState('');
     const [diagnostico, setDiagnostico] = useState('');
     const [observacion, setObservacion] = useState('');
     const [procedimiento, setProcedimiento] = useState('');
@@ -108,11 +109,22 @@ export default function AtencionesClinicas() {
     function resetForm() {
         setFecha(localDate());
         setMascotaId('');
+        setBusquedaMascota('');
         setDiagnostico('');
         setObservacion('');
         setProcedimiento('');
         setLineas([emptyLine()]);
     }
+
+    const term = busquedaMascota.trim().toLowerCase();
+    const mascotasFiltradas = catalogs.mascotas.filter((pet) => {
+        if (!term) return true;
+        return (
+            pet.nombre.toLowerCase().includes(term) ||
+            pet.especie.toLowerCase().includes(term) ||
+            (pet.raza && pet.raza.toLowerCase().includes(term))
+        );
+    });
 
     function updateLine(index: number, field: keyof ClinicalLine, value: string) {
         setLineas((current) => current.map((line, lineIndex) => (
@@ -228,16 +240,36 @@ export default function AtencionesClinicas() {
 
                                 <div className="clinical-form-grid">
                                     <label className="entry-field">
-                                        <span>Mascota</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                                            <span>Mascota</span>
+                                            <span style={{ fontSize: '0.78rem', color: '#183d35', fontWeight: 600 }}>
+                                                {catalogs.mascotas.length > 0 ? `${catalogs.mascotas.length} animales registrados` : 'Cargando...'}
+                                            </span>
+                                        </div>
+                                        {catalogs.mascotas.length > 5 && (
+                                            <input
+                                                type="text"
+                                                placeholder="Filtrar por nombre, especie o raza..."
+                                                value={busquedaMascota}
+                                                onChange={(e) => setBusquedaMascota(e.target.value)}
+                                                style={{ marginBottom: '0.4rem', fontSize: '0.85rem', padding: '0.45rem 0.65rem' }}
+                                            />
+                                        )}
                                         <select
                                             value={mascotaId}
                                             onChange={(event) => setMascotaId(event.target.value)}
                                             required
                                         >
-                                            <option value="">Selecciona una mascota</option>
-                                            {catalogs.mascotas.map((pet) => (
+                                            <option value="">
+                                                {loading
+                                                    ? 'Cargando animales del refugio...'
+                                                    : term
+                                                        ? `Selecciona una mascota (${mascotasFiltradas.length} encontradas)`
+                                                        : `Selecciona una mascota (${catalogs.mascotas.length} registradas)`}
+                                            </option>
+                                            {mascotasFiltradas.map((pet) => (
                                                 <option key={pet.id} value={pet.id}>
-                                                    {pet.nombre} — {pet.especie} ({pet.estado_actual})
+                                                    {pet.nombre} — {pet.especie} {pet.raza ? `· ${pet.raza}` : ''} ({pet.estado_actual})
                                                 </option>
                                             ))}
                                         </select>

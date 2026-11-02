@@ -65,6 +65,7 @@ export default function ArticulosInventario() {
     const [mermaForm, setMermaForm] = useState<MermaForm>(initialMermaForm);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [criticalAlert, setCriticalAlert] = useState('');
 
     useEffect(() => {
         let active = true;
@@ -359,6 +360,47 @@ export default function ArticulosInventario() {
                                 Nuevo artículo
                             </button>
                         </section>
+
+                        {criticalAlert && (
+                            <div
+                                style={{
+                                    backgroundColor: '#fef2f2',
+                                    border: '1px solid #f87171',
+                                    borderRadius: '8px',
+                                    padding: '16px',
+                                    marginBottom: '16px',
+                                    color: '#991b1b',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    gap: '12px'
+                                }}
+                                role="alert"
+                            >
+                                <div>
+                                    <strong style={{ display: 'block', fontSize: '15px', marginBottom: '4px' }}>
+                                        ⚠️ Alerta de Inventario Crítico por Reducción de Stock
+                                    </strong>
+                                    <p style={{ margin: 0, fontSize: '13px' }}>{criticalAlert}</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setCriticalAlert('')}
+                                    style={{
+                                        background: 'transparent',
+                                        border: '1px solid #f87171',
+                                        borderRadius: '4px',
+                                        padding: '4px 10px',
+                                        color: '#991b1b',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    Cerrar Alerta
+                                </button>
+                            </div>
+                        )}
 
                         {success && (
                             <p

@@ -106,9 +106,9 @@ export default function ControlVencimientos() {
                     <section className="dashboard-intro">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                             <div>
-                                <p className="dashboard-eyebrow">P6: AUTOMATIZACIÓN CLÍNICA</p>
+                                <p className="dashboard-eyebrow">AUTOMATIZACIÓN CLÍNICA</p>
                                 <h2>Control y Alertas Preventivas de Caducidad</h2>
-                                <p>CU16: Monitoreo preventivo de lotes clínicos a 30 y 60 días para evitar pérdidas y suministros caducados.</p>
+                                <p>Monitoreo preventivo de lotes clínicos a 30 y 60 días para evitar pérdidas y suministros caducados.</p>
                             </div>
                             <button onClick={cargarVencimientos} className="submit-btn" style={{ width: 'auto', padding: '10px 20px', cursor: 'pointer' }} disabled={cargando}>
                                 {cargando ? 'Actualizando...' : 'Recargar Lotes'}

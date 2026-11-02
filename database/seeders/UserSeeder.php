@@ -69,6 +69,18 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 6,
+                'nombre' => 'Juan Ronaldo Rojas Ugarte',
+                'ci' => '1000001',
+                'email' => 'rojasugartejuanronaldo@gmail.com',
+                'rol' => 'Administrador',
+                'telefono' => '70000000',
+                'password' => '$2y$12$UVhGlt8U73OpC0e1miblD.2qVpIs6enHCgcrem19BAqpmScJ0RrGK',
+                'activo' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         User::upsert($users, ['id']);

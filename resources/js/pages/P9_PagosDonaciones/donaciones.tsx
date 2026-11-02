@@ -125,25 +125,25 @@ export default function Donaciones() {
 
     return (
         <div className="dashboard-app">
-            <Head title="Recepción de Donaciones Físicas y Efectivo (CU23) - Los Angelitos" />
+            <Head title="Recepción de Donaciones Físicas y Efectivo - Los Angelitos" />
 
             <main className="dashboard-main">
-                <DashboardTopNav title="Donaciones (P9)" />
+                <DashboardTopNav title="Donaciones" />
 
                 <div className="dashboard-content">
                     <section className="dashboard-intro">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                             <div>
-                                <p className="dashboard-eyebrow">P9: RECEPCIÓN DE DONACIONES</p>
+                                <p className="dashboard-eyebrow">RECEPCIÓN DE DONACIONES</p>
                                 <h2>Recepción de Donaciones Físicas y Monetarias</h2>
-                                <p>CU23: Insumos materiales (alimento, medicinas) con actualización inmediata de stock o aportes en efectivo.</p>
+                                <p>Insumos materiales (alimento, medicinas) con actualización inmediata de stock o aportes en efectivo.</p>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setModalCrear(true)}
                                 className="btn-crear"
                             >
-                                <span style={{ fontSize: '16px' }}>+</span> Registrar Donación (CU23)
+                                <span style={{ fontSize: '16px' }}>+</span> Registrar Donación
                             </button>
                         </div>
                     </section>
@@ -183,17 +183,28 @@ export default function Donaciones() {
                                                 </span>
                                             </td>
                                             <td>
-                                                {d.tipo_aporte === 'Dinero' ? (
-                                                    <span style={{ fontWeight: 700, color: 'var(--dashboard-forest)' }}>
-                                                        Bs. {d.aportes_dinero?.[0]?.monto || '0.00'}
-                                                    </span>
-                                                ) : (
-                                                    <span>
-                                                        {(d.detalles_insumos || []).map((di, i) => (
-                                                            <span key={i} style={{ display: 'inline-block', marginRight: '6px', backgroundColor: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontSize: '11.5px' }}>
-                                                                {di.articulo?.nombre} ({di.cantidad} {di.articulo?.unidad_medida})
+                                                {d.aportes_dinero && d.aportes_dinero.length > 0 ? (
+                                                    <div>
+                                                        <span style={{ fontWeight: 700, color: 'var(--dashboard-forest)', fontFamily: "'Instrument Sans', system-ui, sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+                                                            Bs. {parseFloat(d.aportes_dinero[0].monto).toFixed(2)}
+                                                        </span>
+                                                        {d.aportes_dinero[0].observaciones && (
+                                                            <span style={{ display: 'block', fontSize: '11px', color: 'var(--dashboard-muted)', marginTop: '2px' }}>
+                                                                {d.aportes_dinero[0].observaciones.split('|')[0].trim()}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ) : d.detalles_insumos && d.detalles_insumos.length > 0 ? (
+                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                                        {d.detalles_insumos.map((di, i) => (
+                                                            <span key={i} style={{ display: 'inline-block', backgroundColor: '#f1f5f9', padding: '2px 8px', borderRadius: '4px', fontSize: '11.5px', color: '#1e293b', border: '1px solid #e2e8f0' }}>
+                                                                <strong>{di.articulo?.nombre || 'Insumo'}</strong> ({di.cantidad} {di.articulo?.unidad_medida || 'unid'})
                                                             </span>
                                                         ))}
+                                                    </div>
+                                                ) : (
+                                                    <span style={{ fontSize: '12px', color: 'var(--dashboard-muted)', fontStyle: 'italic' }}>
+                                                        {d.tipo_aporte}
                                                     </span>
                                                 )}
                                             </td>
@@ -202,7 +213,7 @@ export default function Donaciones() {
                                                     onClick={() => setReciboModal(d)}
                                                     className="btn-action-view"
                                                 >
-                                                    🧾 Recibo Oficial
+                                                    Recibo Oficial
                                                 </button>
                                             </td>
                                         </tr>
@@ -217,7 +228,7 @@ export default function Donaciones() {
                 {modalCrear && (
                     <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
                         <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '24px', width: '560px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
-                            <h2 style={{ marginBottom: '14px' }}>Registrar Nueva Donación (CU23)</h2>
+                            <h2 style={{ marginBottom: '14px' }}>Registrar Nueva Donación</h2>
                             <form onSubmit={handleRegistrarDonacion}>
                                 <div style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
                                     <button
@@ -385,6 +396,42 @@ export default function Donaciones() {
                             <p style={{ margin: '6px 0', fontSize: '14px' }}>
                                 <strong>Tipo de Donación:</strong> {reciboModal.tipo_aporte}
                             </p>
+
+                            <div style={{ marginTop: '12px', marginBottom: '14px', padding: '14px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '8px' }}>
+                                    Detalle del Aporte Recibido:
+                                </span>
+                                {reciboModal.aportes_dinero && reciboModal.aportes_dinero.length > 0 ? (
+                                    <div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                                            <span style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>Monto Donado:</span>
+                                            <strong style={{ fontSize: '22px', color: '#15803d', fontFamily: "'Instrument Sans', system-ui, sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+                                                Bs. {parseFloat(reciboModal.aportes_dinero[0].monto).toFixed(2)}
+                                            </strong>
+                                        </div>
+                                        {reciboModal.aportes_dinero[0].observaciones && (
+                                            <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#64748b', backgroundColor: '#fff', padding: '8px', borderRadius: '6px', border: '1px dashed #cbd5e1' }}>
+                                                <strong>Concepto / Referencia:</strong> {reciboModal.aportes_dinero[0].observaciones}
+                                            </p>
+                                        )}
+                                    </div>
+                                ) : reciboModal.detalles_insumos && reciboModal.detalles_insumos.length > 0 ? (
+                                    <div>
+                                        <span style={{ fontSize: '13px', color: '#334155', fontWeight: 600, display: 'block', marginBottom: '6px' }}>Artículos / Insumos Entregados:</span>
+                                        <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '13px', color: '#1e293b' }}>
+                                            {reciboModal.detalles_insumos.map((di, i) => (
+                                                <li key={i} style={{ marginBottom: '4px' }}>
+                                                    <strong>{di.articulo?.nombre || 'Artículo'}</strong> — {di.cantidad} {di.articulo?.unidad_medida || 'unidades'}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ) : (
+                                    <span style={{ fontSize: '13px', color: '#64748b', fontStyle: 'italic' }}>
+                                        Aporte registrado: {reciboModal.tipo_aporte}
+                                    </span>
+                                )}
+                            </div>
 
                             <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '8px', margin: '14px 0', fontSize: '13px', color: '#92400e' }}>
                                 ¡Gracias por apoyar el rescate, cuidado y alimentación de nuestros angelitos de cuatro patas!

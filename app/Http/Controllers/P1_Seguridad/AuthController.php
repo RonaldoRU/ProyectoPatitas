@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Paquete P1: Gestión de Seguridad y Autenticación
@@ -30,14 +31,15 @@ class AuthController extends Controller
     public function login(Request $request, AuditoriaService $auditoria): JsonResponse
     {
         $credentials = $request->validate([
-            'usuario' => ['required', 'email'],
+            'usuario' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        $email = strtolower(trim($credentials['usuario']));
+        $loginInput = strtolower(trim($credentials['usuario']));
+        $email = $loginInput;
 
-        if ($this->isLockedOut($email)) {
-            $seconds = $this->remainingLockoutSeconds($email);
+        if ($this->isLockedOut($loginInput)) {
+            $seconds = $this->remainingLockoutSeconds($loginInput);
 
             return response()->json([
                 'mensaje' => 'Demasiados intentos. Espera '.$seconds.' segundos antes de intentarlo de nuevo.',
@@ -45,7 +47,13 @@ class AuthController extends Controller
             ], 429);
         }
 
-        $user = User::query()->where('email', $email)->first();
+        $user = User::query()
+            ->where('email', $loginInput)
+            ->orWhere(function ($q) use ($loginInput): void {
+                $q->where('email', 'like', "%{$loginInput}%")
+                    ->orWhere('nombre', 'like', "%{$loginInput}%");
+            })
+            ->first();
 
         if ($user === null || ! Hash::check($credentials['password'], $user->password)) {
             $auditoria->registrar(
@@ -126,21 +134,29 @@ class AuthController extends Controller
     public function solicitarCodigo(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'ci_email' => ['required', 'email', 'max:255'],
+            'ci_email' => ['required', 'string', 'max:255'],
         ]);
-        $email = strtolower(trim($validated['ci_email']));
-        $user = User::query()->where('email', $email)->first();
+        $input = trim($validated['ci_email']);
+        $user = filter_var($input, FILTER_VALIDATE_EMAIL)
+            ? User::query()->where('email', strtolower($input))->first()
+            : User::query()->where('ci', $input)->first();
 
         if ($user !== null) {
             $code = (string) random_int(100000, 999999);
 
             Cache::put(
-                $this->passwordResetCacheKey($email),
+                $this->passwordResetCacheKey($user->email),
                 Hash::make($code),
                 now()->addMinutes(10),
             );
 
-            $user->notify(new PasswordResetCodeNotification($code));
+            try {
+                $user->notify(new PasswordResetCodeNotification($code));
+            } catch (\Throwable $e) {
+                Log::error('Fallo al enviar correo de restablecimiento: '.$e->getMessage());
+            }
+
+            Log::info("Código de recuperación generado para {$user->email}: {$code}");
         }
 
         return response()->json([
@@ -151,7 +167,7 @@ class AuthController extends Controller
     public function restablecerPassword(Request $request, AuditoriaService $auditoria): JsonResponse
     {
         $validated = $request->validate([
-            'ci_email' => ['required', 'email', 'max:255'],
+            'ci_email' => ['required', 'string', 'max:255'],
             'codigo' => ['required', 'digits:6'],
             'password' => [
                 'required',
@@ -161,10 +177,14 @@ class AuthController extends Controller
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
             ],
         ]);
-        $email = strtolower(trim($validated['ci_email']));
+        $input = trim($validated['ci_email']);
+        $user = filter_var($input, FILTER_VALIDATE_EMAIL)
+            ? User::query()->where('email', strtolower($input))->first()
+            : User::query()->where('ci', $input)->first();
+
+        $email = $user ? $user->email : strtolower($input);
         $cacheKey = $this->passwordResetCacheKey($email);
         $hashedCode = Cache::get($cacheKey);
-        $user = User::query()->where('email', $email)->first();
 
         if (
             $user === null
@@ -188,6 +208,16 @@ class AuthController extends Controller
         DB::transaction(function () use ($user, $validated, $request, $auditoria): void {
             $user->forceFill(['password' => $validated['password']])->save();
             $user->tokens()->delete();
+
+            if (! empty($user->ci)) {
+                DB::table('usuario')->where('ci', $user->ci)->update([
+                    'hash_contrasena' => Hash::make($validated['password']),
+                    'intentos_fallidos' => 0,
+                    'bloqueado_hasta' => null,
+                    'updated_at' => now(),
+                ]);
+            }
+
             $auditoria->registrar($request, $user, 'Restablecer contraseña', 'autenticacion', entidad: $user);
         });
 
