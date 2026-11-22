@@ -1,3 +1,6 @@
+/**
+ * Servicio bitacoraService: Consulta paginada y filtrado de eventos de auditoría del sistema.
+ */
 import { index as indexAuditRoute } from '@/routes/api/bitacora';
 
 export type AuditFilters = {

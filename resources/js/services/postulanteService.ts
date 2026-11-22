@@ -1,3 +1,6 @@
+/**
+ * Servicio postulanteService: API para registrar postulantes, evaluar idoneidad y formalizar adopciones.
+ */
 import applicantRoutes from '@/routes/api/postulantes';
 import {
     index as indexApplicantsRoute,

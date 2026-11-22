@@ -1,3 +1,3 @@
-import Mascotas from './P7_RescateClinico/mascotas';
+import Page from './P03_RescateClinicaAdopciones/mascotas';
 
-export default Mascotas;
+export default Page;

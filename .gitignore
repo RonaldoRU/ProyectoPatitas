@@ -32,3 +32,11 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Documentos, textos y scripts auxiliares excluidos del repositorio
+*.md
+*.docx
+/doc_content.txt
+/diseno_relaciones_tabla_medicamento.txt
+/enterprise_architect_scripts/
+/.agents/

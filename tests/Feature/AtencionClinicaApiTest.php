@@ -220,5 +220,5 @@ test('administrators and veterinarians can access clinical catalogs', function (
 test('the clinical attention registration page renders through Inertia', function () {
     $this->get('/atenciones-clinicas')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('atenciones-clinicas'));
+        ->assertInertia(fn ($page) => $page->component('P03_RescateClinicaAdopciones/atenciones-clinicas'));
 });

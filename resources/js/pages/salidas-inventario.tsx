@@ -1,4 +1,3 @@
-import SalidasInventario from './P5_Abastecimiento/salidas-inventario';
+import Page from './P02_LogisticaInventario/salidas-inventario';
 
-export default SalidasInventario;
-
+export default Page;

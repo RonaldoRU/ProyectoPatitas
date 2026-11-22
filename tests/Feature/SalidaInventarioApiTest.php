@@ -197,9 +197,9 @@ test('stockout validation rejects missing fields nonpositive quantities and dupl
 test('stockout endpoints require receptionist or volunteer access', function () {
     $this->getJson('/api/salidas-inventario/catalogos')->assertUnauthorized();
 
-    $administrator = createSalidaInventarioUser('admin-salida-forbidden@example.org', 'Administrador');
+    $externalUser = createSalidaInventarioUser('veterinario-salida-forbidden@example.org', 'Veterinario');
 
-    $this->withToken($administrator->createToken('stockout-admin-forbidden')->plainTextToken)
+    $this->withToken($externalUser->createToken('stockout-external-forbidden')->plainTextToken)
         ->getJson('/api/salidas-inventario/catalogos')
         ->assertForbidden();
 });
@@ -207,5 +207,5 @@ test('stockout endpoints require receptionist or volunteer access', function () 
 test('the stockout registration page renders through Inertia', function () {
     $this->get('/salidas-inventario')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('salidas-inventario'));
+        ->assertInertia(fn ($page) => $page->component('P02_LogisticaInventario/salidas-inventario'));
 });

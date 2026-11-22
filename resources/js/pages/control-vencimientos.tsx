@@ -1,3 +1,3 @@
-import ControlVencimientos from './P6_AutomatizacionClinica/control-vencimientos';
+import Page from './P02_LogisticaInventario/control-vencimientos';
 
-export default ControlVencimientos;
+export default Page;

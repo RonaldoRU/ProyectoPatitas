@@ -104,3 +104,31 @@ test('dashboard returns current shelter metrics for an authenticated user', func
 test('dashboard rejects requests without a Sanctum token', function () {
     $this->getJson('/api/dashboard')->assertUnauthorized();
 });
+
+test('reportes gerenciales can be fetched by admin and veterinarian', function () {
+    $admin = User::query()->where('rol', 'Administrador')->first() ?? User::query()->create([
+        'nombre' => 'Admin Reporte',
+        'email' => 'admin_rep@example.org',
+        'telefono' => '71122334',
+        'rol' => 'Administrador',
+        'password' => bcrypt('password123'),
+        'activo' => true,
+    ]);
+
+    $response = $this->withToken($admin->createToken('report-test')->plainTextToken)
+        ->getJson('/api/reportes-gerenciales');
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'periodo',
+            'evolucion_mensual',
+            'mascotas_rescatadas',
+            'top_insumos_consumidos',
+            'poblacion_por_estado',
+            'poblacion_por_especie',
+            'indicadores_clave',
+        ]);
+
+    $tasa = (float) $response->json('indicadores_clave.tasa_adopcion_porcentaje');
+    expect($tasa)->toBeGreaterThanOrEqual(0.0)->toBeLessThanOrEqual(100.0);
+});

@@ -2,6 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\P4_CatalogoExistencias\AjusteInventarioController as BaseAjusteInventarioController;
+use App\Http\Controllers\P02_LogisticaInventario\AjusteInventarioController as BaseAjusteInventarioController;
 
 class AjusteInventarioController extends BaseAjusteInventarioController {}

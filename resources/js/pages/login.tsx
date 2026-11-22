@@ -1,4 +1,3 @@
-import Login from './P1_Seguridad/login';
+import Page from './P01_SeguridadUsuariosAuditoria/login';
 
-export default Login;
-
+export default Page;

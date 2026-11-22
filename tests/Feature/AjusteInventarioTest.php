@@ -179,7 +179,7 @@ test('the adjustment endpoint requires an administrator, an integer quantity, an
     $this->postJson('/api/ajustes-inventario')
         ->assertUnauthorized();
 
-    $staff = createAjusteInventarioUser('ajuste-staff@example.org', 'Veterinario');
+    $staff = createAjusteInventarioUser('ajuste-staff@example.org', 'Donante');
     $staffToken = $staff->createToken('inventory-adjustment-staff-test')->plainTextToken;
 
     $this->withToken($staffToken)

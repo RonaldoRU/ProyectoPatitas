@@ -1,4 +1,3 @@
-import EntradasInsumos from './P5_Abastecimiento/entradas-insumos';
+import Page from './P02_LogisticaInventario/entradas-insumos';
 
-export default EntradasInsumos;
-
+export default Page;

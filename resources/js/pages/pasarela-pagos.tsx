@@ -1,2 +1,3 @@
-export { default } from './P9_PagosDonaciones/pasarela-pagos';
+import Page from './P04_DonacionesPasarela/pasarela-pagos';
 
+export default Page;

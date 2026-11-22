@@ -1,4 +1,3 @@
-import AtencionesClinicas from './P7_RescateClinico/atenciones-clinicas';
+import Page from './P03_RescateClinicaAdopciones/atenciones-clinicas';
 
-export default AtencionesClinicas;
-
+export default Page;

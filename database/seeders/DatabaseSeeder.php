@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             proveedorSeeder::class,
             compraSeeder::class,
             detalle_compraSeeder::class,
+            Ciclo4DatosCoherentesSeeder::class,
         ]);
     }
 }

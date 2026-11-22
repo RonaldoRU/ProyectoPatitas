@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Modelo SesionJWT: Control de tokens de sesión emitidos para clientes y dispositivos.
+ * Monitorea validez temporal, revocación, IP del cliente y navegador utilizado.
+ */
 class SesionJWT extends Model
 {
     protected $table = 'sesion_jwt';
@@ -17,6 +21,9 @@ class SesionJWT extends Model
 
     public $timestamps = false;
 
+    /**
+     * Atributos asignables en masa.
+     */
     protected $fillable = [
         'token_hash',
         'id_usuario',
@@ -27,11 +34,17 @@ class SesionJWT extends Model
         'estado',
     ];
 
+    /**
+     * Conversión de tipos.
+     */
     protected $casts = [
         'fecha_emision' => 'datetime',
         'fecha_expiracion' => 'datetime',
     ];
 
+    /**
+     * Relación: Usuario al que se le emitió la sesión JWT.
+     */
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id');

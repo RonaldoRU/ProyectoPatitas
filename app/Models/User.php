@@ -13,6 +13,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
+ * Modelo User: Representa los usuarios del sistema (Administrador, Veterinario, Voluntario, etc.).
+ * Gestiona credenciales de acceso, autenticación web/API con Sanctum y roles de usuario.
+ *
  * @property int $id
  * @property string $nombre
  * @property string|null $ci
@@ -30,13 +33,16 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
+    /**
+     * Relación: Registros de auditoría generados por este usuario.
+     */
     public function bitacoras(): HasMany
     {
         return $this->hasMany(Bitacora::class, 'id_usuario');
     }
 
     /**
-     * Get the attributes that should be cast.
+     * Define las transformaciones automáticas de tipo de datos para los atributos.
      *
      * @return array<string, string>
      */

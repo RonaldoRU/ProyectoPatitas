@@ -41,4 +41,15 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Inteligencia Artificial Google Gemini (Comandos de Voz)
+    |--------------------------------------------------------------------------
+    | Clave de API y modelo leídos exclusivamente desde el archivo .env.
+    */
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-3-flash-preview'),
+    ],
+
 ];

@@ -1,4 +1,3 @@
-import Proveedores from './P5_Abastecimiento/proveedores';
+import Page from './P02_LogisticaInventario/proveedores';
 
-export default Proveedores;
-
+export default Page;

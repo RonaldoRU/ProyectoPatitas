@@ -1,3 +1,9 @@
+/**
+ * Servicio authService: Gestiona la comunicación HTTP con los endpoints de autenticación y seguridad:
+ * - Inicio y cierre de sesión (login, logout).
+ * - Manejo y persistencia de tokens Sanctum en el navegador.
+ * - Solicitud de código OTP y restablecimiento de contraseña.
+ */
 import { login as loginRoute, logout as logoutRoute } from '@/routes/api';
 import {
     request as requestRecoveryCodeRoute,

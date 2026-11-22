@@ -1,4 +1,3 @@
-import Dashboard from './P10_IndicadoresGerenciales/dashboard';
+import Page from './P05_FacturacionReportes/dashboard';
 
-export default Dashboard;
-
+export default Page;

@@ -2617,7 +2617,8 @@ CREATE TABLE public.proveedor (
     direccion character varying(255),
     telefono character varying(20),
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    estado character varying(50) DEFAULT 'Activo'::character varying NOT NULL
 );
 
 
@@ -2659,7 +2660,8 @@ CREATE TABLE public.proveedors (
     updated_at timestamp(0) without time zone,
     identificacion character varying(50),
     tipo_insumo_provisto character varying(255),
-    activo boolean DEFAULT true NOT NULL
+    activo boolean DEFAULT true NOT NULL,
+    estado character varying(50) DEFAULT 'Activo'::character varying NOT NULL
 );
 
 

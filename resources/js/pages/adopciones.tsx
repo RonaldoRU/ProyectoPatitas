@@ -1,3 +1,3 @@
-import Adopciones from './P8_Adopciones/adopciones';
+import Page from './P03_RescateClinicaAdopciones/adopciones';
 
-export default Adopciones;
+export default Page;

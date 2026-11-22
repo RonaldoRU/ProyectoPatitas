@@ -1,3 +1,6 @@
+/**
+ * Servicio articuloInventarioService: Peticiones HTTP para el catálogo de existencias y artículos de inventario.
+ */
 import {
     index as indexInventoryRoute,
     store as storeInventoryRoute,

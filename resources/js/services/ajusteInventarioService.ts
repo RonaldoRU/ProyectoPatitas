@@ -1,3 +1,6 @@
+/**
+ * Servicio ajusteInventarioService: Peticiones HTTP para registrar ajustes manuales al stock (mermas, pérdidas o sobrantes).
+ */
 import {
     index as inventoryAdjustmentsRoute,
     store as storeInventoryAdjustmentRoute,

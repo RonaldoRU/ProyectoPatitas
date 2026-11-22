@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Modelo EvaluacionIdoneidad: Evaluación socioambiental cuantitativa del postulante a adopción.
+ * Calcula puntaje de vivienda, compromiso y determina el resultado (Apto / No Apto).
+ */
 class EvaluacionIdoneidad extends Model
 {
     protected $table = 'evaluacion_idoneidad';
@@ -13,6 +17,9 @@ class EvaluacionIdoneidad extends Model
 
     public $timestamps = false;
 
+    /**
+     * Atributos asignables en masa.
+     */
     protected $fillable = [
         'id_interesado',
         'puntaje_vivienda',
@@ -23,6 +30,9 @@ class EvaluacionIdoneidad extends Model
         'created_at',
     ];
 
+    /**
+     * Conversión de tipos.
+     */
     protected $casts = [
         'puntaje_vivienda' => 'integer',
         'puntaje_compromiso' => 'integer',
@@ -30,6 +40,9 @@ class EvaluacionIdoneidad extends Model
         'created_at' => 'datetime',
     ];
 
+    /**
+     * Relación: Interesado o postulante evaluado.
+     */
     public function interesado(): BelongsTo
     {
         return $this->belongsTo(InteresadoAdopcion::class, 'id_interesado', 'id');

@@ -3,6 +3,9 @@ import {
     store as storeStockoutRoute,
 } from '@/routes/api/salidas-inventario';
 
+/**
+ * Servicio salidaInventarioService: Peticiones HTTP para registrar salidas o consumos de insumos del inventario.
+ */
 export type StockoutArticle = {
     id: number;
     nombre: string;

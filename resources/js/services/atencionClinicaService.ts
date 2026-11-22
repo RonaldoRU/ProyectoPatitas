@@ -3,6 +3,9 @@ import {
     store as storeClinicalAttentionRoute,
 } from '@/routes/api/atenciones-clinicas';
 
+/**
+ * Servicio atencionClinicaService: Peticiones HTTP para registrar atenciones médicas veterinarias y consumo clínico de insumos.
+ */
 export type ClinicalPet = {
     id: number;
     nombre: string;

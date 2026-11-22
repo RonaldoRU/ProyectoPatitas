@@ -1,3 +1,6 @@
+/**
+ * Servicio entradaInsumoService: Peticiones HTTP para registrar ingresos por compras o donaciones de insumos con control de lotes.
+ */
 import {
     catalogos as entryCatalogsRoute,
     store as storeEntryRoute,

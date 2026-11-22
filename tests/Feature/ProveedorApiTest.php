@@ -178,7 +178,7 @@ test('deactivating a supplier retains the supplier record and audit history', fu
 test('provider management endpoints require an administrator and reject incomplete data', function () {
     $this->getJson('/api/proveedores')->assertUnauthorized();
 
-    $staff = createProveedorAdmin('proveedores-staff@example.org', 'Recepcionista');
+    $staff = createProveedorAdmin('proveedores-staff@example.org', 'Veterinario');
     $staffToken = $staff->createToken('supplier-management-staff-test')->plainTextToken;
 
     $this->withToken($staffToken)

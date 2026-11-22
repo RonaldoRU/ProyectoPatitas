@@ -7,6 +7,9 @@ type InputFieldProps = {
     onChange: (value: string) => void;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'value' | 'onChange'>;
 
+/**
+ * Componente InputField: Campo de formulario reutilizable con etiqueta accesible vinculada.
+ */
 export default function InputField({
     id,
     label,

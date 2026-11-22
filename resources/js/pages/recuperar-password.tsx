@@ -1,4 +1,3 @@
-import RecuperarPassword from './P1_Seguridad/recuperar-password';
+import Page from './P01_SeguridadUsuariosAuditoria/recuperar-password';
 
-export default RecuperarPassword;
-
+export default Page;

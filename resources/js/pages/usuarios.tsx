@@ -1,4 +1,3 @@
-import Usuarios from './P2_Usuarios/usuarios';
+import Page from './P01_SeguridadUsuariosAuditoria/usuarios';
 
-export default Usuarios;
-
+export default Page;

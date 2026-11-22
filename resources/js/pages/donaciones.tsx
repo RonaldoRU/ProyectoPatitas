@@ -1,3 +1,3 @@
-import Donaciones from './P9_PagosDonaciones/donaciones';
+import Page from './P04_DonacionesPasarela/donaciones';
 
-export default Donaciones;
+export default Page;

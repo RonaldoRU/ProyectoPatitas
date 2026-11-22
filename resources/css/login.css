@@ -1,195 +1,768 @@
+/* ==========================================================================
+   PORTAL PÚBLICO E INICIO DE SESIÓN — REFUGIO ANGELITOS DE EDGAR
+   Sistema Tipográfico Oficial:
+   - Familia Principal: 'Outfit' (Geométrica sans-serif moderna, humanista y clínica)
+     * H1 (Títulos Principales): 700/800, 28px - 32px
+     * H2 / H3 (Subtítulos y Secciones): 600/700, 18px - 22px
+     * Etiquetas Técnicas y Badges: 600/700, 11px - 13px, tracking-wide, uppercase
+     * Cuerpo de Texto y Párrafos: 400/500, 14px - 15px
+   - Datos Numéricos / Contadores: 'JetBrains Mono', 'Fira Code', font-mono (tamaño uniforme)
+   - Sin fondos de colores en los datos (tarjetas limpias blancas con bordes neutros).
+   ========================================================================== */
 .login-screen {
-    --color-forest: #183d35;
-    --color-paper: #f5f4ec;
-    --color-ink: #182522;
-    --color-muted: #65736d;
-    --color-coral: #c85237;
-    --color-line: #d8ddd4;
+    --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --color-navy: #12354a;
+    --color-forest: #165b4c;
+    --color-paper: #f8f7f4;
+    --color-card: #ffffff;
+    --color-ink: #16262e;
+    --color-muted: #526068;
+    --color-coral: #c85a44;
+    --color-coral-dark: #a94430;
+    --color-line: #dde1e4;
 
     display: grid;
     min-height: 100vh;
-    grid-template-columns: minmax(0, 1.08fr) minmax(390px, 0.92fr);
+    grid-template-columns: minmax(0, 1.38fr) minmax(390px, 0.82fr);
     background-color: var(--color-paper);
     color: var(--color-ink);
-    font-family: 'Instrument Sans', ui-sans-serif, sans-serif;
+    font-family: var(--font-main);
+    font-size: 14.5px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
 }
 
-.brand-panel {
+/* Columna izquierda: Portal informativo del refugio */
+.shelter-showcase {
     position: relative;
-    display: flex;
-    min-height: 100vh;
-    align-items: flex-end;
+    padding: clamp(20px, 3vw, 34px);
     overflow: hidden;
-    background: var(--color-forest);
-    color: white;
+    background: var(--color-paper);
+    border-right: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.brand-panel::after {
+.shelter-showcase__sketch-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(13 34 29 / 5%) 20%, rgb(13 34 29 / 88%) 100%);
-    content: '';
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
 }
 
-.brand-panel__image {
-    position: absolute;
+.shelter-showcase__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 850px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 1. Cabecera con logotipo circular y botones de acceso */
+.shelter-header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-left: 4px solid var(--color-navy);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(18, 53, 74, 0.04);
+}
+
+.shelter-header-card__identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.shelter-header-card__logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2b7a78;
+    flex-shrink: 0;
+}
+
+.shelter-header-card__tag {
+    display: block;
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-forest);
+    margin-bottom: 2px;
+}
+
+/* H1 Principal: Outfit 700/800, 28px - 32px */
+.shelter-header-card__title {
+    margin: 0;
+    font-family: var(--font-main);
+    font-size: clamp(26px, 2.5vw, 30px);
+    font-weight: 800;
+    color: var(--color-navy);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+}
+
+.shelter-header-card__motto {
+    margin: 3px 0 0;
+    font-family: var(--font-main);
+    font-size: 14px;
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.shelter-header-card__cta-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.shelter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid var(--color-line);
+    background: #ffffff;
+    color: var(--color-navy);
+}
+
+.shelter-btn--navy {
+    background-color: var(--color-navy);
+    border-color: var(--color-navy);
+    color: #ffffff;
+}
+
+.shelter-btn--navy:hover {
+    background-color: #0d2738;
+}
+
+.shelter-btn--coral {
+    background-color: #ffffff;
+    color: var(--color-navy);
+    border: 1.5px solid var(--color-navy);
+}
+
+.shelter-btn--coral:hover {
+    background-color: var(--color-navy);
+    color: #ffffff;
+}
+
+/* 2. Grilla de Fotografía Real + Resumen del Refugio (sin fondos de color en los datos) */
+.shelter-story-grid {
+    display: grid;
+    grid-template-columns: minmax(250px, 330px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+.shelter-photo-frame {
+    margin: 0;
+    background: #ffffff;
+    padding: 10px 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shelter-photo-frame__img-wrap {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 180px;
+    background: linear-gradient(165deg, #235332 0%, #3d7a4c 54%, #735238 100%);
+    padding: 3px;
+}
+
+.shelter-photo-frame__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
-}
-
-.brand-panel__content {
-    position: relative;
-    z-index: 1;
-    width: min(680px, 100%);
-    padding: clamp(32px, 7vw, 92px);
-}
-
-.brand-panel__eyebrow,
-.form-heading__eyebrow {
+    object-position: center 22%;
     display: block;
-    margin-bottom: 18px;
-    color: #e1e89f;
-    font-size: 12px;
+    border-radius: 6px;
+}
+
+.shelter-photo-frame__badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--color-navy);
+    border: 1px solid var(--color-line);
+    font-family: var(--font-main);
+    font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 6px;
 }
 
-.brand-panel h1 {
-    max-width: 540px;
-    margin: 0;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 64px;
+.shelter-photo-frame__caption {
+    margin-top: 9px;
+    font-family: var(--font-main);
+    font-size: 13.5px;
     font-weight: 400;
-    line-height: 1.02;
+    color: var(--color-muted);
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
 }
 
-.brand-panel__content > p {
-    margin: 20px 0 50px;
-    color: rgb(255 255 255 / 88%);
-    font-size: 17px;
+.shelter-photo-frame__caption svg {
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
-.brand-panel__mark {
+.shelter-facts-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.shelter-drawing-card {
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.shelter-drawing-card__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* H2 / H3: Outfit 600/700, 18px - 22px */
+.shelter-drawing-card__title {
+    margin: 0;
+    font-family: var(--font-main);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-navy);
+}
+
+.shelter-drawing-card__sub {
+    margin: 2px 0 0;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-muted);
+}
+
+/* Numeración del Login: Tamaño uniforme en fuente monospaciada, sin fondo de color */
+.shelter-stats-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.shelter-stat-pill {
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+}
+
+.shelter-stat-pill__num {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-navy);
+    line-height: 1.2;
+}
+
+.shelter-stat-pill__label {
+    display: block;
+    font-family: var(--font-main);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    margin-top: 4px;
+}
+
+.shelter-quick-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.shelter-action-chip {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    color: rgb(255 255 255 / 74%);
-    font-size: 10px;
-    font-weight: 700;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background-color: #ffffff;
+    color: var(--color-navy);
+    border: 1px solid var(--color-line);
 }
 
-.brand-panel__mark span {
-    color: #e1e89f;
+.shelter-action-chip--teal {
+    background-color: var(--color-forest);
+    border-color: var(--color-forest);
+    color: #ffffff;
+}
+
+.shelter-action-chip--teal:hover {
+    background-color: #104539;
+}
+
+.shelter-action-chip--outline:hover {
+    border-color: var(--color-navy);
+}
+
+/* 3. Vitrina Dinámica de Animalitos Disponibles (con fondo único Tierra y Verde en cada foto) */
+.shelter-pets-preview {
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+.shelter-pets-preview__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.shelter-pets-preview__eyebrow {
+    display: block;
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-forest);
+}
+
+.shelter-pets-preview__title {
+    margin: 2px 0 0;
+    font-family: var(--font-main);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-navy);
+}
+
+.shelter-pets-preview__filters {
+    display: flex;
+    gap: 6px;
+}
+
+.shelter-filter-pill {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 600;
+    border: 1px solid var(--color-line);
+    background: #ffffff;
+    color: var(--color-ink);
+    cursor: pointer;
+}
+
+.shelter-filter-pill--active {
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+    color: #ffffff;
+}
+
+.shelter-pets-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.shelter-pet-card {
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.shelter-pet-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(18, 53, 74, 0.08);
+}
+
+/* Fondo único de Tierra y Verde en las imágenes de los animales */
+.shelter-pet-card__img-box {
+    position: relative;
+    height: 112px;
+    background: linear-gradient(165deg, #235332 0%, #3d7a4c 54%, #735238 100%);
+    padding: 4px;
+    overflow: hidden;
+}
+
+.shelter-pet-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 6px;
+}
+
+/* Badge técnico sin fondo de color chillón */
+.shelter-pet-card__status {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--color-navy);
+    border: 1px solid var(--color-line);
+    font-family: var(--font-main);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+.shelter-pet-card__body {
+    padding: 9px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    background: #ffffff;
+}
+
+.shelter-pet-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.shelter-pet-card__top strong {
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-navy);
+}
+
+.shelter-pet-card__top span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-muted);
+}
+
+.shelter-pet-card__breed {
+    margin: 0;
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shelter-pet-card__zone {
+    margin: 0 0 6px;
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--color-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shelter-pet-card__action {
+    margin-top: auto;
+    width: 100%;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    background: #ffffff;
+    color: var(--color-navy);
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.14s ease;
+}
+
+.shelter-pet-card__action:hover {
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+    color: #ffffff;
+}
+
+.shelter-pets-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-line);
+}
+
+.shelter-page-btn {
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    background: #ffffff;
+    color: var(--color-navy);
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.shelter-page-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.shelter-page-indicator {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.shelter-pets-preview__empty {
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-muted);
+}
+
+/* ==========================================================================
+   COLUMNA DERECHA: FORMULARIO DE ACCESO Y REGISTRO (OUTFIT + MONO)
+   ========================================================================== */
+.login-access-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    padding: 28px 20px;
+    background: var(--color-paper);
 }
 
 .form-panel {
-    display: grid;
-    min-height: 100vh;
-    place-items: center;
-    padding: 48px;
-    background-image: repeating-linear-gradient(
-        135deg,
-        transparent 0,
-        transparent 23px,
-        rgb(24 61 53 / 2%) 24px,
-        rgb(24 61 53 / 2%) 25px
-    );
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-.form-card {
+.form-card,
+.active-session-card {
     width: min(100%, 430px);
-    padding: clamp(28px, 4vw, 48px);
-    border: 1px solid rgb(24 61 53 / 10%);
+    padding: clamp(22px, 3vw, 32px);
+    border: 1px solid var(--color-line);
+    border-top: 4px solid var(--color-navy);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(18, 53, 74, 0.06);
+}
+
+.active-session-card {
+    text-align: center;
+}
+
+.form-card__brand-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--color-line);
+}
+
+.form-card__brand-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2b7a78;
+}
+
+.form-card__brand-title {
+    display: block;
+    font-family: var(--font-main);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-navy);
+}
+
+.form-card__brand-motto {
+    display: block;
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-muted);
+}
+
+.form-mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    padding: 4px;
     border-radius: 8px;
-    background: rgb(255 255 255 / 94%);
-    box-shadow: 0 24px 70px rgb(24 61 53 / 9%);
+    margin-bottom: 18px;
+}
+
+.form-mode-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: #ffffff;
+    color: var(--color-muted);
+    font-family: var(--font-main);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.form-mode-tab--active {
+    background: var(--color-navy);
+    color: #ffffff;
 }
 
 .form-heading {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .form-heading__eyebrow {
-    margin-bottom: 12px;
-    color: var(--color-coral);
+    display: block;
+    margin-bottom: 6px;
+    color: var(--color-forest);
+    font-family: var(--font-main);
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
 }
 
 .form-heading h2 {
     margin: 0;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 38px;
-    font-weight: 400;
-    line-height: 1.12;
+    font-family: var(--font-main);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-navy);
+    line-height: 1.15;
 }
 
 .form-heading p {
-    margin: 10px 0 0;
+    margin: 6px 0 0;
     color: var(--color-muted);
-    font-size: 15px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.45;
 }
 
 .form-card form {
     display: grid;
-    gap: 22px;
+    gap: 15px;
 }
 
 .field {
     display: grid;
-    gap: 8px;
+    gap: 5px;
 }
 
 .field label {
     color: var(--color-ink);
+    font-family: var(--font-main);
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .field input {
     width: 100%;
-    min-height: 50px;
-    padding: 0 14px;
+    min-height: 44px;
+    padding: 0 13px;
     border: 1px solid var(--color-line);
-    border-radius: 4px;
+    border-radius: 7px;
     outline: none;
-    background: #fff;
+    background: #ffffff;
     color: var(--color-ink);
-    font: inherit;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 400;
     transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.field input::placeholder {
-    color: #9aa49e;
-}
-
 .field input:focus {
-    border-color: var(--color-forest);
-    box-shadow: 0 0 0 3px rgb(24 61 53 / 12%);
+    border-color: var(--color-navy);
+    box-shadow: 0 0 0 3px rgba(18, 53, 74, 0.1);
 }
 
 .btn-primary {
-    min-height: 52px;
+    min-height: 46px;
     margin-top: 2px;
     border: 0;
-    border-radius: 4px;
-    background: var(--color-coral);
+    border-radius: 8px;
+    background: var(--color-navy);
     color: white;
     cursor: pointer;
-    font: inherit;
+    font-family: var(--font-main);
     font-size: 14px;
     font-weight: 700;
-    transition: background-color 150ms ease, transform 150ms ease;
+    transition: background-color 150ms ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    background: #a9422d;
-}
-
-.btn-primary:focus-visible {
-    outline: 3px solid rgb(200 82 55 / 32%);
-    outline-offset: 3px;
+    background: #0d2738;
 }
 
 .btn-primary:disabled {
@@ -198,13 +771,14 @@
 }
 
 .form-message {
-    margin: -6px 0 0;
+    margin: -4px 0 0;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 .form-message--error {
-    color: #a33125;
+    color: #b91c1c;
+    font-weight: 600;
 }
 
 .form-message--success {
@@ -213,69 +787,79 @@
 
 .login-forgot {
     justify-self: end;
-    margin-top: -12px;
-    color: var(--color-forest);
-    font-size: 12px;
-    font-weight: 700;
-    text-decoration-color: rgb(24 61 53 / 35%);
+    margin-top: -6px;
+    color: var(--color-navy);
+    font-family: var(--font-main);
+    font-size: 12.5px;
+    font-weight: 600;
     text-underline-offset: 3px;
 }
 
 .login-forgot:hover {
-    color: var(--color-coral);
+    color: var(--color-forest);
 }
 
-.form-footnote {
-    margin: 25px 0 0;
-    padding-top: 18px;
+.form-switch-box {
+    margin-top: 16px;
+    padding-top: 14px;
     border-top: 1px solid var(--color-line);
-    color: var(--color-muted);
-    font-size: 12px;
     text-align: center;
 }
 
-@media (max-width: 760px) {
+.form-switch-box__label {
+    margin: 0 0 8px;
+    font-family: var(--font-main);
+    font-size: 13px;
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.form-switch-box__btn {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--color-navy);
+    background-color: #ffffff;
+    color: var(--color-navy);
+    font-family: var(--font-main);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.form-switch-box__btn:hover {
+    background-color: var(--color-navy);
+    color: #ffffff;
+}
+
+@media (max-width: 1120px) {
     .login-screen {
         grid-template-columns: 1fr;
     }
 
-    .brand-panel {
-        min-height: 300px;
+    .shelter-pets-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .brand-panel__content {
-        padding: 36px 28px;
-    }
-
-    .brand-panel__content > p {
-        margin-bottom: 28px;
-    }
-
-    .brand-panel h1 {
-        font-size: 48px;
-    }
-
-    .form-panel {
+    .login-access-column {
         min-height: auto;
-        padding: 32px 20px 44px;
+        padding: 24px 16px 40px;
     }
 }
 
-@media (max-width: 420px) {
-    .brand-panel h1 {
-        font-size: 40px;
+@media (max-width: 720px) {
+    .shelter-story-grid {
+        grid-template-columns: 1fr;
     }
 
-    .form-card {
-        padding: 26px 20px;
+    .shelter-pets-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
+@media (max-width: 440px) {
+    .shelter-pets-grid {
+        grid-template-columns: 1fr;
     }
 }

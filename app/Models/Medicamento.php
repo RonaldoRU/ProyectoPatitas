@@ -7,7 +7,13 @@ use Database\Factories\MedicamentoFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Modelo Medicamento: Ficha farmacológica especializada para insumos médicos veterinarios.
+ * Maneja principios activos, vías de administración, especies destino, concentraciones y fechas de expiración.
+ */
 class Medicamento extends Model
 {
     /** @use HasFactory<MedicamentoFactory> */
@@ -15,8 +21,12 @@ class Medicamento extends Model
 
     protected $table = 'medicamentos';
 
+    /**
+     * Atributos asignables en masa.
+     */
     protected $fillable = [
         'id_medicamento',
+        'articulo_id',
         'nombre',
         'principio_activo',
         'categoria_farmacologica',
@@ -35,6 +45,25 @@ class Medicamento extends Model
         'precio_unitario',
     ];
 
+    /**
+     * Relación: Artículo de inventario físico correspondiente (superentidad).
+     */
+    public function articulo(): BelongsTo
+    {
+        return $this->belongsTo(ArticuloInventario::class, 'articulo_id');
+    }
+
+    /**
+     * Relación: Prescripciones clínicas y cálculos de dosificación asociados.
+     */
+    public function prescripciones(): HasMany
+    {
+        return $this->hasMany(PrescripcionDosificacion::class, 'medicamento_id');
+    }
+
+    /**
+     * Conversión de tipos.
+     */
     protected $casts = [
         'es_inyectable' => 'boolean',
         'fecha_vencimiento' => 'date',

@@ -37,9 +37,9 @@
 
 .inventory-summary__card strong {
     color: var(--inventory-ink);
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 28px;
-    font-weight: 400;
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    font-size: 26px;
+    font-weight: 700;
 }
 
 .inventory-summary__card--alert strong {
@@ -99,9 +99,9 @@
 .inventory-history-heading h2 {
     margin: 0;
     color: var(--inventory-ink);
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 23px;
-    font-weight: 400;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .inventory-history-heading p {
@@ -126,19 +126,26 @@
     min-height: 24px;
     align-items: center;
     padding: 0 9px;
-    border-radius: 3px;
-    font-size: 10px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .inventory-status--ok {
-    background: #e7f0e5;
-    color: #315d37;
+    background: #ffffff;
+    border-color: #86efac;
+    color: #166534;
 }
 
 .inventory-status--low {
-    background: #fff0eb;
-    color: #9b3929;
+    background: #ffffff;
+    border-color: #fca5a5;
+    color: #991b1b;
 }
 
 .inventory-modal {

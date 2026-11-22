@@ -1,3 +1,8 @@
+/**
+ * Utilidades de Soporte API (apiSupport.ts):
+ * - `readApiError`: Interpreta errores HTTP y mensajes de validación de Laravel.
+ * - `authHeaders`: Construye las cabeceras estándar con el Bearer Token para peticiones autenticadas.
+ */
 type ApiError = {
     message?: string;
     errors?: Record<string, string[]>;

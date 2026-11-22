@@ -1,3 +1,6 @@
+/**
+ * Servicio userService: Peticiones HTTP para gestión de usuarios (CRUD, cambio de rol RBAC, activación/suspensión).
+ */
 import {
     index as indexUsersRoute,
     role as changeRoleRoute,

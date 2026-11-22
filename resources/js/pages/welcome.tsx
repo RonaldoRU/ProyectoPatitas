@@ -1,4 +1,3 @@
-import Welcome from './P1_Seguridad/welcome';
+import Page from './P01_SeguridadUsuariosAuditoria/login';
 
-export default Welcome;
-
+export default Page;

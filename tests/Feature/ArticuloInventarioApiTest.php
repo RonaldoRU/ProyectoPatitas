@@ -136,7 +136,7 @@ test('inventory catalog rejects invalid minimum stock and non-administrator acce
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['stock_minimo_alerta']);
 
-    $staff = createArticuloInventarioAdmin('inventory-staff@example.org', 'Veterinario');
+    $staff = createArticuloInventarioAdmin('inventory-staff@example.org', 'Donante');
     $staffToken = $staff->createToken('inventory-staff-test')->plainTextToken;
 
     $this->app['auth']->forgetGuards();
@@ -150,6 +150,6 @@ test('inventory catalog page renders through Inertia', function () {
     $this->get('/articulos-inventario')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('articulos-inventario')
+            ->component('P02_LogisticaInventario/articulos-inventario')
             ->has('errors'));
 });

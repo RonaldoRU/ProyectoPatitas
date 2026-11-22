@@ -17,8 +17,16 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use LogicException;
 
+/**
+ * Servicio de Gestión de Lotes e Inventario Farmacéutico:
+ * Implementa la estrategia FIFO (First In, First Out / PEPS: Primero en entrar, primero en salir)
+ * y gestiona el control estricto de vencimientos y dispensación segura de medicamentos.
+ */
 class InventarioLotesService
 {
+    /**
+     * Determina si una categoría o nombre de artículo califica como medicamento farmacéutico.
+     */
     public function esMedicamento(string $categoria, ?string $nombre = null): bool
     {
         $textoNormalizado = Str::ascii(Str::lower($categoria.' '.($nombre ?? '')));
@@ -40,6 +48,9 @@ class InventarioLotesService
         ]);
     }
 
+    /**
+     * Crea un nuevo lote disponible a partir de una compra formal de insumos.
+     */
     public function crearLoteCompra(DetalleCompra $detalle): InventarioLote
     {
         return InventarioLote::query()->create([
@@ -51,6 +62,9 @@ class InventarioLotesService
         ]);
     }
 
+    /**
+     * Crea un nuevo lote disponible a partir de una donación física recibida.
+     */
     public function crearLoteDonacion(DetalleDonacionInsumo $detalle): InventarioLote
     {
         return InventarioLote::query()->create([

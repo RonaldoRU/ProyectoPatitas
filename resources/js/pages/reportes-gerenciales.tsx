@@ -1,4 +1,3 @@
-import ReportesGerenciales from './P10_IndicadoresGerenciales/reportes-gerenciales';
+import Page from './P05_FacturacionReportes/reportes-gerenciales';
 
-export default ReportesGerenciales;
-
+export default Page;

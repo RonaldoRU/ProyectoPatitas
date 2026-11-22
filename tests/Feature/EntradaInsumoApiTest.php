@@ -358,5 +358,5 @@ test('purchase catalog lists only active suppliers and purchases reject inactive
 test('the entry registration page renders through Inertia', function () {
     $this->get('/entradas-insumos')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('entradas-insumos'));
+        ->assertInertia(fn ($page) => $page->component('P02_LogisticaInventario/entradas-insumos'));
 });

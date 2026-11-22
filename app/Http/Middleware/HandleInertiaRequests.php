@@ -5,21 +5,22 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
+/**
+ * Middleware HandleInertiaRequests: Conecta Laravel con la aplicación frontend en React.
+ * Comparte datos globales automáticos (usuario autenticado, nombre de la app, errores de validación)
+ * con todos los componentes React renderizados con Inertia.
+ */
 class HandleInertiaRequests extends Middleware
 {
     /**
-     * The root template that's loaded on the first page visit.
-     *
-     * @see https://inertiajs.com/server-side-setup#root-template
+     * Plantilla base de Blade cargada en la visita inicial (resources/views/app.blade.php).
      *
      * @var string
      */
     protected $rootView = 'app';
 
     /**
-     * Determines the current asset version.
-     *
-     * @see https://inertiajs.com/asset-versioning
+     * Determina la versión de los assets compilados para invalidar caché en despliegues.
      */
     public function version(Request $request): ?string
     {
@@ -27,9 +28,9 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
-     * Define the props that are shared by default.
-     *
-     * @see https://inertiajs.com/shared-data
+     * Define las propiedades compartidas globales disponibles en todas las páginas React:
+     * - `name`: Nombre de la aplicación ("Los Angelitos de Edgar").
+     * - `auth.user`: Usuario autenticado actual o null si no ha iniciado sesión.
      *
      * @return array<string, mixed>
      */

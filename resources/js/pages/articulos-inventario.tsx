@@ -1,4 +1,3 @@
-import ArticulosInventario from './P4_CatalogoExistencias/articulos-inventario';
+import Page from './P02_LogisticaInventario/articulos-inventario';
 
-export default ArticulosInventario;
-
+export default Page;

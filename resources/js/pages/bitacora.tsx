@@ -1,4 +1,3 @@
-import Bitacora from './P3_Auditoria/bitacora';
+import Page from './P01_SeguridadUsuariosAuditoria/bitacora';
 
-export default Bitacora;
-
+export default Page;

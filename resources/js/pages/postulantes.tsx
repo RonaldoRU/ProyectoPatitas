@@ -1,4 +1,3 @@
-import Postulantes from './P8_Adopciones/postulantes';
+import Page from './P03_RescateClinicaAdopciones/postulantes';
 
-export default Postulantes;
-
+export default Page;

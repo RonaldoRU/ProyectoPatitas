@@ -1,3 +1,6 @@
+/**
+ * Servicio proveedorService: Peticiones HTTP para gestión de proveedores de insumos (CRUD y activación/inactivación).
+ */
 import {
     index as suppliersIndexRoute,
     status as supplierStatusRoute,
@@ -14,6 +17,7 @@ export type Supplier = {
     direccion: string;
     identificacion: string | null;
     tipo_insumo_provisto: string | null;
+    estado: string;
     activo: boolean;
     created_at: string;
     updated_at: string;
@@ -25,6 +29,7 @@ export type SupplierInput = Pick<
 > & {
     identificacion: string | null;
     tipo_insumo_provisto: string;
+    estado?: string;
 };
 
 const proveedorService = {
@@ -95,7 +100,10 @@ const proveedorService = {
                 ...authHeaders(token),
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ activo: active }),
+            body: JSON.stringify({
+                activo: active,
+                estado: active ? 'Activo' : 'Inactivo',
+            }),
         });
 
         if (!response.ok) {
