@@ -16,7 +16,8 @@ RUN set -eux; \
         libxml2-dev \
         libonig-dev \
         libpng-dev \
-        libpq-dev; \
+        libpq-dev \
+        postgresql-client; \
     docker-php-ext-install \
         pdo_mysql \
         pdo_pgsql \

@@ -34,13 +34,31 @@ fi
 
 # Ejecutar migraciones y carga inicial automáticamente si hay conexión a la base de datos
 if [ -n "$DATABASE_URL" ] || [ -n "$DB_HOST" ] || [ -n "$PGHOST" ]; then
-    echo ">> Ejecutando migraciones de base de datos..."
+    USERS_COUNT=$(php -r 'require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $k = $app->make(Illuminate\Contracts\Console\Kernel::class); $k->bootstrap(); try { echo \App\Models\User::count(); } catch (\Throwable $e) { echo -1; }' 2>/dev/null || echo -1)
+    DUMP_FILE="/var/www/html/database/basededatosdelawebanimalitos_dump.sql"
+
+    if [ -f "$DUMP_FILE" ] && { [ "$USERS_COUNT" -le 0 ] 2>/dev/null || [ "${FORCE_IMPORT_DUMP:-false}" = "true" ]; }; then
+        echo ">> Importando respaldo completo de base de datos ($DUMP_FILE)..."
+        if [ -n "$DATABASE_URL" ]; then
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=0 -f "$DUMP_FILE" || echo ">> Aviso: Error al importar dump SQL vía DATABASE_URL."
+        else
+            PGPASSWORD="${PGPASSWORD:-$DB_PASSWORD}" psql \
+                -h "${PGHOST:-$DB_HOST}" \
+                -p "${PGPORT:-${DB_PORT:-5432}}" \
+                -U "${PGUSER:-${DB_USERNAME:-postgres}}" \
+                -d "${PGDATABASE:-$DB_DATABASE}" \
+                -v ON_ERROR_STOP=0 \
+                -f "$DUMP_FILE" || echo ">> Aviso: Error al importar dump SQL vía host."
+        fi
+    fi
+
+    echo ">> Verificando migraciones pendientes de base de datos..."
     php artisan migrate --force || echo ">> Aviso: No se pudieron ejecutar migraciones automáticas en este inicio."
 
-    # Si la base de datos no tiene usuarios, sembrar datos iniciales automáticamente
+    # Respaldo: si aún no hay usuarios y no existía dump, ejecutar seeders
     USERS_COUNT=$(php -r 'require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $k = $app->make(Illuminate\Contracts\Console\Kernel::class); $k->bootstrap(); try { echo \App\Models\User::count(); } catch (\Throwable $e) { echo -1; }' 2>/dev/null || echo -1)
     if [ "$USERS_COUNT" = "0" ]; then
-        echo ">> Base de datos inicial vacía detectada. Ejecutando seeders iniciales..."
+        echo ">> Base de datos vacía detectada. Ejecutando seeders iniciales..."
         php artisan db:seed --force || echo ">> Aviso: Falló la siembra inicial de datos."
     fi
 fi
